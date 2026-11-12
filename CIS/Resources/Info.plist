@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>AlternateIconName</key>
+			<string>dmg</string>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>dmg</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>dmg</string>
+			<key>CFBundleTypeName</key>
+			<string>DMG Disk Image</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>ExcludeFromDefaults</key>
+			<true/>
+			<key>IconVariant</key>
+			<string>disk</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.apple.disk-image</string>
+				<string>com.apple.disk-image-smi</string>
+			</array>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>OnTab</key>
+			<true/>
+		</dict>
+	</array>
+	<key>NSRequiresAquaSystemAppearance</key>
+	<true/>
+	<key>NSSupportsAutomaticTermination</key>
+	<true/>
+	<key>NSSupportsSuddenTermination</key>
+	<true/>
+</dict>
+</plist>

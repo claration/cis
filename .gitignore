@@ -1,0 +1,14 @@
+*~
+.#*
+\#*
+*.pyc
+_*
+
+.DS_Store
+.build
+.swiftpm
+.vscode
+Package.resolved
+xcuserdata
+dist
+Examples

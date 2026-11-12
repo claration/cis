@@ -1,0 +1,107 @@
+{
+  "fill" : {
+    "linear-gradient" : [
+      "srgb:0.42148,0.38728,0.41708,1.00000",
+      "srgb:0.23517,0.20960,0.24484,1.00000"
+    ],
+    "orientation" : {
+      "start" : {
+        "x" : 0.5,
+        "y" : 0
+      },
+      "stop" : {
+        "x" : 0.5,
+        "y" : 0.7
+      }
+    }
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "blend-mode" : "normal",
+          "fill" : {
+            "linear-gradient" : [
+              "srgb:0.59243,0.54443,0.61398,1.00000",
+              "srgb:0.50817,0.46252,0.53428,1.00000"
+            ],
+            "orientation" : {
+              "start" : {
+                "x" : 0.5,
+                "y" : 0.16750036503610782
+              },
+              "stop" : {
+                "x" : 0.5,
+                "y" : 0.9476901240205097
+              }
+            }
+          },
+          "image-name" : "Vector.svg",
+          "name" : "Vector",
+          "position" : {
+            "scale" : 1.09,
+            "translation-in-points" : [
+              -0.0011654931304292404,
+              -106.75781249481906
+            ]
+          }
+        },
+        {
+          "image-name" : "disk.png",
+          "name" : "disk",
+          "position" : {
+            "scale" : 1.09,
+            "translation-in-points" : [
+              0.5450000000000728,
+              204.59375
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    },
+    {
+      "layers" : [
+        {
+          "blend-mode" : "normal",
+          "fill" : {
+            "solid" : "srgb:0.91539,1.00000,0.91492,1.00000"
+          },
+          "glass" : false,
+          "hidden" : false,
+          "image-name" : "asdasdasdas.png",
+          "name" : "asdasdasdas",
+          "opacity" : 0.09,
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}
