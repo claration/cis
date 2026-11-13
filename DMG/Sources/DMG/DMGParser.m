@@ -21,6 +21,7 @@ enum : uint32_t {
     kChunkZlib    = 0x80000005,
     kChunkBzip2   = 0x80000006,
     kChunkLZFSE   = 0x80000007,
+    kChunkLZMA    = 0x80000008,
     kChunkEnd     = 0xFFFFFFFF,
 };
 
@@ -250,6 +251,7 @@ static NSDictionary<NSNumber *, NSData *> *resourcesByID(id list) {
                 case kChunkZlib:
                 case kChunkBzip2:
                 case kChunkLZFSE:
+                case kChunkLZMA:
                     ok = ch.fileLength > 0 && ch.fileLength <= kMaxPackedChunkBytes &&
                     ch.fileLength <= _fileSize - ch.fileOffset &&
                     ch.sectorCount * 512 <= kMaxDecodedChunkBytes;
@@ -400,6 +402,9 @@ static NSDictionary<NSNumber *, NSData *> *resourcesByID(id list) {
         }
         case kChunkLZFSE:
             produced = compression_decode_buffer(victim->buffer, outSize, _scratch, (size_t)c->fileLength, NULL, COMPRESSION_LZFSE);
+            break;
+        case kChunkLZMA:
+            produced = compression_decode_buffer(victim->buffer, outSize, _scratch, (size_t)c->fileLength, NULL, COMPRESSION_LZMA);
             break;
         case kChunkADC:
             produced = decodeADC(_scratch, (size_t)c->fileLength, victim->buffer, outSize);
