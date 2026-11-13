@@ -49,13 +49,13 @@ internal final class DMG {
         self.icon = Self.findIcon(in: volume)
         self.virtualSize = parser.virtualSize
 
-        if let icon =  self.icon {
+        if let icon = self.icon {
             let cc = CCColorCube()
             // COLORCUBE GIVES THE UGLIEST COLORS EVER
             if let c = cc.extractColors(
                 from: icon,
                 flags: [.orderByBrightness, .onlyDarkColors]
-            )?[0] {
+            )?.first {
                 self.color = c
             } else {
                 self.color = nil
