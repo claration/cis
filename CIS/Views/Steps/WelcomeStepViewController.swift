@@ -14,11 +14,9 @@ internal final class WelcomeStepViewController: WizardStepViewController {
     internal override init(dmg: DMG) {
         super.init(dmg: dmg)
 
-        let appName = self.dmg.name
-
-        self.titleLabel.stringValue = "Welcome to \(appName) Setup"
+        self.titleLabel.stringValue = "Welcome to \(dmg.name) Setup"
         self.descriptionLabel.stringValue = """
-        Setup will guide you through the installation process of \(appName).
+        Setup will guide you through the installation process of \(dmg.name).
 
         It is recommended you close all other applications before starting Setup. This will make it possible to update relevant system files without having to reboot your \(ProcessInfo.processInfo.marketingModel).
 

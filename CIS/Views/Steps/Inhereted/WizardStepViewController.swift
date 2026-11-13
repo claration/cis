@@ -8,7 +8,6 @@
 import AppKit
 
 internal class WizardStepViewController: NSViewController {
-    internal let dmg: DMG
 
     // MARK: Views
 
@@ -50,7 +49,6 @@ internal class WizardStepViewController: NSViewController {
     // MARK: Setup
 
     internal init(dmg: DMG) {
-        self.dmg = dmg
         super.init(nibName: nil, bundle: nil)
 
         sidebarBackgroundView.layer?.backgroundColor = (dmg.color ?? .systemPink).cgColor

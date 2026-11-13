@@ -8,7 +8,6 @@
 import AppKit
 
 internal final class InstallerHeaderView: NSView {
-    internal let dmg: DMG
 
     // MARK: Views
 
@@ -62,7 +61,6 @@ internal final class InstallerHeaderView: NSView {
     // MARK: Setup
 
     init(dmg: DMG) {
-        self.dmg = dmg
         super.init(frame: .zero)
 
         let customColor = dmg.color ?? .systemPink

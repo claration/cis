@@ -23,16 +23,14 @@ internal final class FinishedStepViewController: WizardStepViewController {
     internal override init(dmg: DMG) {
         super.init(dmg: dmg)
 
-        let appName = self.dmg.name
-
-        self.titleLabel.stringValue = "Completing \(appName) Setup"
+        self.titleLabel.stringValue = "Completing \(dmg.name) Setup"
         self.descriptionLabel.stringValue = """
-        \(appName) has been installed on your \(ProcessInfo.processInfo.marketingModel).
+        \(dmg.name) has been installed on your \(ProcessInfo.processInfo.marketingModel).
 
         Click Finish to close Setup.
         """
 
-        self.actionCheckbox.title = "Run \(appName)"
+        self.actionCheckbox.title = "Run \(dmg.name)"
         self.actionCheckbox.state = .off
     }
 
