@@ -5,7 +5,7 @@
 //  Created by samsam on 11/12/26.
 //
 
-import AppKit
+internal import AppKit
 
 extension NSAlert {
     /// Helper function for alerts with optional custom buttons.

@@ -5,7 +5,9 @@
 //  Created by samsam on 11/11/26.
 //
 
-import Foundation
+internal import class Foundation.ProcessInfo
+internal import class Foundation.FileManager
+internal import class Foundation.NSNumber
 
 extension ProcessInfo {
     /// The operating systems remaining space, in formatted bytes (i.e. 236 GB).

@@ -5,8 +5,8 @@
 //  Created by samsam on 11/11/26.
 //
 
-import AppKit
-import DMG
+internal import AppKit
+internal import class DMG.DMGNode
 
 private final class FlippedView: NSView {
     override var isFlipped: Bool { return true }

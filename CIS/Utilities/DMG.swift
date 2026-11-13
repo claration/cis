@@ -5,10 +5,12 @@
 //  Created by samsam on 11/11/26.
 //
 
-import Foundation
-import AppKit
-import ColorCube
-import DMG
+internal import AppKit
+internal import class ColorCube.CCColorCube
+internal import class DMG.DMGParser
+internal import class DMG.DMGVolumeLoader
+internal import class DMG.DMGNode
+internal import protocol DMG.DMGVolume
 
 internal final class DMG {
     let name: String

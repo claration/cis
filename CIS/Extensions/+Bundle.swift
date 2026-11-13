@@ -5,7 +5,7 @@
 //  Created by samsam on 11/11/26.
 //
 
-import Foundation
+internal import class Foundation.Bundle
 
 extension Bundle {
     /// The bundle's display name.

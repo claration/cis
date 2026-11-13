@@ -5,8 +5,8 @@
 //  Created by samsam on 11/11/26.
 //
 
-import AppKit
-import UniformTypeIdentifiers
+internal import AppKit
+internal import struct UniformTypeIdentifiers.UTType
 
 internal final class AppDelegate: NSObject, NSApplicationDelegate {
     internal var window: NSWindow?
@@ -24,10 +24,10 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
         // Ideally, the app should only be opened when a user double pressed
         // on a DMG file, otherwise we should force our app to be default.
         if !launchedWithDMG {
-            guard let contentType = UTType(filenameExtension: "dmg") else {
-                return
-            }
-            Self.setUTI(toOpen: contentType)
+            NSWorkspace.setDefaultFileForApplication(
+                url: Bundle.main.bundleURL,
+                toOpen: UTType(filenameExtension: "dmg")!
+            )
         }
         #endif
     }
@@ -101,7 +101,7 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
                 buttonTitles: ["Open Disk Image Mounter", "No Thanks"]
             ) { response in
                 if response == .alertFirstButtonReturn {
-                    let result = runProcess(
+                    let result = Process.runProcess(
                         executable: "/usr/bin/open",
                         arguments: ["-a", "DiskImageMounter", dmgPath.relativePath]
                     )
@@ -124,32 +124,6 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
 }
 
 extension AppDelegate {
-    /// Helper function for force setting the OS's default UTI's.
-    static internal func setUTI(toOpen contentType: UTType) {
-        let appURL = Bundle.main.bundleURL
-
-        NSWorkspace.shared.setDefaultApplication(at: appURL, toOpen: contentType) { error in
-            if let error = error {
-                NSAlert.showAlert(
-                    title: "Failed to Set Default Application",
-                    message: error.localizedDescription,
-                    style: .warning
-                )
-                return
-            }
-
-            if let appURL = appURL as CFURL? {
-                // forces launch services to recheck us
-                LSRegisterURL(appURL, true)
-            }
-
-            NSAlert.showAlert(
-                title: "Successfully Set Default Application",
-                message: "You can now use \(Bundle.main.name) to install applications instead of Disk Image Mounter.",
-                style: .informational
-            )
-        }
-    }
 
     /// Helper function for setting our apps icon at runtime.
     static internal func setBadgedAppIcon(with subIcon: NSImage) {

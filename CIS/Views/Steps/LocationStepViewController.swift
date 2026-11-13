@@ -5,7 +5,7 @@
 //  Created by samsam on 11/11/26.
 //
 
-import AppKit
+internal import AppKit
 
 internal final class LocationStepViewController: BannerStepViewController {
 
