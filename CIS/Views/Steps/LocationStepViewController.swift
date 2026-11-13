@@ -65,7 +65,7 @@ internal final class LocationStepViewController: BannerStepViewController {
         self.headerView.titleLabel.stringValue = "Choose Install Location"
         self.headerView.descriptionLabel.stringValue = "Choose the folder in which to install \(appName)."
         self.pathTextField.stringValue = self.dmg.destinationFolderPath.relativePath
-        self.spaceRequiredLabel.stringValue = "Space required: \(self.dmg.size.formattedBytes())"
+        self.spaceRequiredLabel.stringValue = "Space required: \(self.dmg.virtualSize.formattedBytes())"
         if let remainingSpace = ProcessInfo.processInfo.remainingSpace() {
             self.spaceAvailableLabel.stringValue = "Space available: \(remainingSpace)"
         }

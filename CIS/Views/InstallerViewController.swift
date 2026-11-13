@@ -24,7 +24,7 @@ internal final class InstallerViewController: NSViewController {
 
     private lazy var steps: [InstallerStep] = {
         var list: [InstallerStep] = [.welcome]
-        if dmg.licenseText != nil {
+        if !dmg.licenses.isEmpty {
             list.append(.license)
         }
         list.append(contentsOf: [.apps, .location, .installing, .finished])

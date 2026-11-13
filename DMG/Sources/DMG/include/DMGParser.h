@@ -1,5 +1,7 @@
 #import <Foundation/Foundation.h>
 
+#import "DMGLicense.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 FOUNDATION_EXPORT NSErrorDomain const DMGParserErrorDomain;
@@ -25,6 +27,9 @@ typedef NS_ERROR_ENUM(DMGParserErrorDomain, DMGParserError) {
 /// Holes in the image read back as zeros.
 - (BOOL)readBytes:(void *)buffer atOffset:(uint64_t)offset length:(NSUInteger)length error:(NSError **)error;
 - (nullable NSData *)readDataAtOffset:(uint64_t)offset length:(NSUInteger)length error:(NSError **)error;
+
+/// The DMG's software agreement.
+- (nullable NSArray<DMGLicense *> *)licenseAgreementsWithError:(NSError **)error NS_SWIFT_NAME(licenseAgreements());
 
 @end
 

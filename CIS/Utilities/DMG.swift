@@ -10,34 +10,44 @@ internal import class ColorCube.CCColorCube
 internal import class DMG.DMGParser
 internal import class DMG.DMGVolumeLoader
 internal import class DMG.DMGNode
+internal import class DMG.DMGLicense
 internal import protocol DMG.DMGVolume
 
 internal final class DMG {
-    let name: String
-    let path: URL
-    var destinationFolderPath: URL = .init(filePath: "/Applications")
-    let licenseText: String?
-    let icon: NSImage?
-    let color: NSColor?
-    let size: UInt64
+    internal let name: String
+    internal let path: URL
+    internal var destinationFolderPath: URL = .init(filePath: "/Applications")
+    internal let icon: NSImage?
+    internal let color: NSColor?
+    internal let virtualSize: UInt64
+    internal let licenses: [DMGLicense]
+    internal var nodesToInstall: [DMGNode] = []
 
     private let volume: any DMGVolume
 
-    var nodesToInstall: [DMGNode] = []
+    // MARK: Setup
 
-    private static let chunkSize = 1 << 20 // copy files 1 MB at a time
-    private static let maxLicenseBytes = 2 << 20
-    private static let licenseKeywords = ["license", "licence", "eula", "copying"]
-
-    init(path: URL) throws {
+    internal init(path: URL) throws {
         let parser = try DMGParser(contentsOfFile: path.path)
         let volume = try DMGVolumeLoader.open(parser: parser)
+
         self.path = path
         self.volume = volume
         self.name = volume.volumeName
-        self.licenseText = Self.findLicense(in: volume)
+
+        if
+            let agreements = try? parser.licenseAgreements(),
+            !agreements.isEmpty
+        {
+            self.licenses = agreements
+        } else if let singleLicense = Self.findLicenseFile(in: volume) {
+            self.licenses = [singleLicense]
+        } else {
+            self.licenses = []
+        }
+
         self.icon = Self.findIcon(in: volume)
-        self.size = parser.virtualSize
+        self.virtualSize = parser.virtualSize
 
         if let icon =  self.icon {
             let cc = CCColorCube()
@@ -62,18 +72,16 @@ internal final class DMG {
         }
     }
 
-    // MARK: - Lookup
+    // MARK: Utils
 
-    func lookup() throws -> [DMGNode] {
+    internal func lookup() throws -> [DMGNode] {
         try volume.children(of: volume.rootNode).filter {
             $0.kind == .directory && $0.name.lowercased().hasSuffix(".app")
         }
     }
 
-    // MARK: - Install
-
     @discardableResult
-    func install(
+    internal func install(
         _ apps: [DMGNode],
         onProgress: @escaping (String) async -> Void
     ) async throws -> [URL] {
@@ -164,9 +172,11 @@ internal final class DMG {
             }
 
             var offset: UInt64 = 0
+            let chunkSize = 1 << 20 // copy files 1 MB at a time
+
             while offset < node.size {
                 try autoreleasepool { // keeps memory flat for large files
-                    let length = Int(min(UInt64(Self.chunkSize), node.size - offset))
+                    let length = Int(min(UInt64(chunkSize), node.size - offset))
                     let chunk = try volume.readData(of: node, offset: offset, length: UInt(length))
                     if chunk.isEmpty { throw DMGError.shortRead(node.name) }
                     try handle.write(contentsOf: chunk)
@@ -212,7 +222,7 @@ internal final class DMG {
 // MARK: - file finders
 
 extension DMG {
-    private static func findLicense(in volume: any DMGVolume) -> String? {
+    private static func findLicenseFile(in volume: any DMGVolume) -> DMGLicense? {
         guard let children = try? volume.children(of: volume.rootNode) else {
             return nil
         }
@@ -223,8 +233,12 @@ extension DMG {
 
         let preferred = texts.first { node in
             let lowered = node.name.lowercased()
-            return licenseKeywords.contains { lowered.contains($0) }
+            return ["license", "licence", "eula", "copying"].contains {
+                lowered.contains($0)
+            }
         }
+
+        let maxLicenseBytes = 2 << 20
 
         guard
             let node = preferred ?? texts.first,
@@ -238,7 +252,7 @@ extension DMG {
             return nil
         }
 
-        return decode(data)
+        return DMGLicense(regionCode: 0, textData: data, rtfData: nil, buttonData: nil)
     }
 
     // jesus christ
@@ -282,14 +296,6 @@ extension DMG {
 
         return NSImage(data: icnsData)
     }
-
-    private static func decode(_ data: Data) -> String? {
-        if data.starts(with: [0xFF, 0xFE]) || data.starts(with: [0xFE, 0xFF]) {
-            if let text = String(data: data, encoding: .utf16) { return text }
-        }
-        let body = data.starts(with: [0xEF, 0xBB, 0xBF]) ? data.dropFirst(3) : data[...]
-        return String(data: Data(body), encoding: .utf8) ?? String(data: Data(body), encoding: .macOSRoman)
-    }
 }
 
 // MARK: - DMGError
@@ -313,3 +319,4 @@ internal enum DMGError: LocalizedError {
         }
     }
 }
+

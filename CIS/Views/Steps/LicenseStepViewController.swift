@@ -6,6 +6,7 @@
 //
 
 internal import AppKit
+internal import class DMG.DMGLicense
 
 internal final class LicenseStepViewController: BannerStepViewController {
 
@@ -48,9 +49,29 @@ internal final class LicenseStepViewController: BannerStepViewController {
 
         self.licenseTextView.isEditable = false
         self.licenseTextView.isSelectable = true
-        if let licenseText = dmg.licenseText {
+
+        if let licenseText = extractTextFromLicense(for: dmg.licenses) {
             self.licenseTextView.string = licenseText
         }
+    }
+
+    private func extractTextFromLicense(for licenses: [DMGLicense]) -> String? {
+        guard let license = dmg.licenses.first else {
+            return nil
+        }
+
+        let attributed = license.rtfData.flatMap {
+            NSAttributedString(rtf: $0, documentAttributes: nil)
+        }
+
+        guard
+            let text = attributed?.string ?? license.text,
+            !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        else {
+            return nil
+        }
+
+        return text
     }
 
     internal required init?(coder: NSCoder) {

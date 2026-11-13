@@ -86,6 +86,18 @@ static size_t decodeADC(const uint8_t *src, size_t srcLen, uint8_t *dst, size_t 
     return out;
 }
 
+static NSDictionary<NSNumber *, NSData *> *resourcesByID(id list) {
+    NSMutableDictionary<NSNumber *, NSData *> *out = [NSMutableDictionary dictionary];
+    if (![list isKindOfClass:[NSArray class]]) return out;
+    for (id entry in (NSArray *)list) {
+        if (![entry isKindOfClass:[NSDictionary class]]) continue;
+        id data = entry[@"Data"], ident = entry[@"ID"];
+        if (![data isKindOfClass:[NSData class]] || ![ident respondsToSelector:@selector(integerValue)]) continue;
+        out[@([ident integerValue])] = data;
+    }
+    return out;
+}
+
 @implementation DMGParser {
     int _fd;
     uint64_t _fileSize;
@@ -100,6 +112,9 @@ static size_t decodeADC(const uint8_t *src, size_t srcLen, uint8_t *dst, size_t 
     uint64_t _useCounter;
     uint8_t *_scratch;    // reusable buffer for compressed bytes
     size_t _scratchCapacity;
+
+    uint64_t _xmlOffset;  // UDIF
+    uint64_t _xmlLength;
 }
 
 - (nullable instancetype)initWithContentsOfFile:(NSString *)path error:(NSError **)error {
@@ -167,6 +182,9 @@ static size_t decodeADC(const uint8_t *src, size_t srcLen, uint8_t *dst, size_t 
         if (error) *error = DMGMakeError(DMGParserErrorInvalidContainer, @"Invalid XML plist range in trailer.");
         return NO;
     }
+
+    _xmlOffset = xmlOffset;
+    _xmlLength = xmlLength;
 
     NSMutableData *xml = [NSMutableData dataWithLength:(NSUInteger)xmlLength];
     if (![self preadFully:xml.mutableBytes length:(size_t)xmlLength at:xmlOffset error:error]) return NO;
@@ -419,6 +437,74 @@ static size_t decodeADC(const uint8_t *src, size_t srcLen, uint8_t *dst, size_t 
         done += (size_t)r;
     }
     return YES;
+}
+
+#pragma mark - License
+
+//   'LPic' 5000  language table: defaultRegion(2) count(2) then count x { region(2), idOffset(2), twoByte(2) }
+//   'TEXT' / 'RTF ' 5000+idOffset  text
+//   'STR#' 5000+idOffset           button labels
+- (nullable NSArray<DMGLicense *> *)licenseAgreementsWithError:(NSError **)error {
+    if (_xmlLength == 0) return @[];
+
+    NSMutableData *xml = [NSMutableData dataWithLength:(NSUInteger)_xmlLength];
+    if (![self preadFully:xml.mutableBytes length:(size_t)_xmlLength at:_xmlOffset error:error]) return nil;
+
+    NSError *plistError = nil;
+    id plist = [NSPropertyListSerialization propertyListWithData:xml options:NSPropertyListImmutable format:NULL error:&plistError];
+    if (![plist isKindOfClass:[NSDictionary class]]) {
+        if (error) *error = DMGMakeError(DMGParserErrorInvalidContainer, @"Plist is invalid: %@", plistError.localizedDescription);
+        return nil;
+    }
+    id fork = plist[@"resource-fork"];
+    if (![fork isKindOfClass:[NSDictionary class]]) return @[];
+
+    NSDictionary<NSNumber *, NSData *> *lpics = resourcesByID(fork[@"LPic"]);
+    NSDictionary<NSNumber *, NSData *> *texts = resourcesByID(fork[@"TEXT"]);
+    NSDictionary<NSNumber *, NSData *> *rtfs = resourcesByID(fork[@"RTF "]);
+    NSDictionary<NSNumber *, NSData *> *strs = resourcesByID(fork[@"STR#"]);
+    if (texts.count == 0 && rtfs.count == 0) return @[];
+
+    NSMutableArray<NSArray<NSNumber *> *> *entries = [NSMutableArray array];
+    uint16_t defaultRegion = 0;
+    NSData *lpic = lpics[@5000] ?: lpics.allValues.firstObject;
+    if (lpic.length >= 4) {
+        const uint8_t *d = lpic.bytes;
+        defaultRegion = be16(d);
+        NSUInteger count = be16(d + 2);
+        for (NSUInteger i = 0; i < count && 4 + 6 * (i + 1) <= lpic.length; i++) {
+            const uint8_t *e = d + 4 + 6 * i;
+            [entries addObject:@[@(be16(e)), @(5000 + (NSInteger)be16(e + 2))]];
+        }
+    }
+
+    // treat every TEXT/RTF resource as an English license
+    if (entries.count == 0) {
+        NSMutableSet<NSNumber *> *ids = [NSMutableSet setWithArray:texts.allKeys];
+        [ids addObjectsFromArray:rtfs.allKeys];
+        for (NSNumber *rid in [ids.allObjects sortedArrayUsingSelector:@selector(compare:)]) [entries addObject:@[@0, rid]];
+    }
+
+    NSMutableArray<DMGLicense *> *licenses = [NSMutableArray array];
+    BOOL placedDefault = NO;
+
+    for (NSArray<NSNumber *> *entry in entries) {
+        uint16_t region = entry[0].unsignedShortValue;
+        NSNumber *rid = entry[1];
+        NSData *textData = texts[rid], *rtfData = rtfs[rid];
+        if (!textData && !rtfData) continue;
+
+        DMGLicense *license = [[DMGLicense alloc] initWithRegionCode:region textData:textData rtfData:rtfData buttonData:strs[rid]];
+
+        // default language goes first
+        if (region == defaultRegion && !placedDefault) {
+            [licenses insertObject:license atIndex:0];
+            placedDefault = YES;
+        } else {
+            [licenses addObject:license];
+        }
+    }
+    return licenses;
 }
 
 @end
