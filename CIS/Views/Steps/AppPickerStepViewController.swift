@@ -54,10 +54,8 @@ internal final class AppPickerStepViewController: BannerStepViewController {
     internal override init(dmg: DMG) {
         super.init(dmg: dmg)
 
-        let appName = self.dmg.name
-
         self.headerView.titleLabel.stringValue = "Pick Applications"
-        self.headerView.descriptionLabel.stringValue = "Please pick the applications for \(appName) you would like to install."
+        self.headerView.descriptionLabel.stringValue = "Please pick the applications that you would like to install."
     }
 
     internal required init?(coder: NSCoder) {
