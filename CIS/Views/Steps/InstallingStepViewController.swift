@@ -13,7 +13,7 @@ internal final class InstallingStepViewController: BannerStepViewController {
     // MARK: Views
 
     private let topMessageLabel: NSTextField = {
-        let label = NSTextField(wrappingLabelWithString: "Idle")
+        let label = NSTextField(wrappingLabelWithString: .l(.installingIdle))
         label.font = NSFont.systemFont(ofSize: 13)
         return label
     }()
@@ -26,7 +26,7 @@ internal final class InstallingStepViewController: BannerStepViewController {
     }()
 
     private let showDetailsButton: NSButton = {
-        let button = NSButton(title: "Show Details", target: nil, action: nil)
+        let button = NSButton(title: .l(.showDetails), target: nil, action: nil)
         button.bezelStyle = .rounded
         return button
     }()
@@ -49,9 +49,8 @@ internal final class InstallingStepViewController: BannerStepViewController {
     internal override init(dmg: DMG) {
         super.init(dmg: dmg)
 
-        let appName = self.dmg.name
-        self.headerView.titleLabel.stringValue = "Installing"
-        self.headerView.descriptionLabel.stringValue = "Please wait while \(appName) is being installed."
+        self.headerView.titleLabel.stringValue = .l(.installingTitle)
+        self.headerView.descriptionLabel.stringValue = .l(.installingDescription(appName: dmg.name))
 
         setupLogTextView()
         setupActions()
@@ -138,9 +137,9 @@ internal final class InstallingStepViewController: BannerStepViewController {
                     self.progressIndicator.stopAnimation(nil)
                     self.progressIndicator.isIndeterminate = false
                     self.progressIndicator.doubleValue = 100.0
-                    self.topMessageLabel.stringValue = "Installation completed successfully!"
+                    self.topMessageLabel.stringValue = .l(.installingSuccessful)
 
-                    let completionMsg = "Installation completed successfully."
+                    let completionMsg: String = .l(.installingSuccessful)
                     self.logTextView.string += "\n\(completionMsg)"
                     let range = NSRange(location: self.logTextView.string.count, length: 0)
                     self.logTextView.scrollRangeToVisible(range)
@@ -150,7 +149,7 @@ internal final class InstallingStepViewController: BannerStepViewController {
             } catch {
                 await MainActor.run {
                     self.progressIndicator.stopAnimation(nil)
-                    let errorMsg = "Installation failed: \(error.localizedDescription)"
+                    let errorMsg = "Error: \(error.localizedDescription)"
                     self.topMessageLabel.stringValue = errorMsg
 
                     self.logTextView.string += "\n\(errorMsg)"

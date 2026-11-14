@@ -29,7 +29,7 @@ internal final class LocationStepViewController: BannerStepViewController {
 
     private let browseButton: NSButton = {
         let button = NSButton()
-        button.title = "Browse..."
+        button.title = .l(.locationBrowseButton)
         button.bezelStyle = .rounded
         return button
     }()
@@ -37,7 +37,7 @@ internal final class LocationStepViewController: BannerStepViewController {
     private let destinationBox: NSBox = {
         let box = NSBox()
         box.boxType = .primary
-        box.title = "Destination Folder"
+        box.title = .l(.locationBrowseTitle)
         box.titleFont = NSFont.boldSystemFont(ofSize: 11)
         box.translatesAutoresizingMaskIntoConstraints = false
         return box
@@ -60,14 +60,16 @@ internal final class LocationStepViewController: BannerStepViewController {
     internal override init(dmg: DMG) {
         super.init(dmg: dmg)
 
-        let appName = self.dmg.name
-
-        self.headerView.titleLabel.stringValue = "Choose Install Location"
-        self.headerView.descriptionLabel.stringValue = "Choose the folder in which to install \(appName)."
+        self.headerView.titleLabel.stringValue = .l(.locationTitle)
+        self.headerView.descriptionLabel.stringValue = .l(.locationDescription(appName: dmg.name))
         self.pathTextField.stringValue = self.dmg.destinationFolderPath.relativePath
-        self.spaceRequiredLabel.stringValue = "Space required: \(self.dmg.virtualSize.formattedBytes())"
+        self.spaceRequiredLabel.stringValue = .l(.locationSpaceRequired(
+            formattedBytes: dmg.virtualSize.formattedBytes()
+        ))
         if let remainingSpace = ProcessInfo.processInfo.remainingSpace() {
-            self.spaceAvailableLabel.stringValue = "Space available: \(remainingSpace)"
+            self.spaceAvailableLabel.stringValue = .l(.locationSpaceAvailable(
+                formattedBytes: remainingSpace
+            ))
         }
     }
 
@@ -130,8 +132,8 @@ extension LocationStepViewController {
         openPanel.canChooseDirectories = true
         openPanel.canChooseFiles = false
         openPanel.allowsMultipleSelection = false
-        openPanel.prompt = "Select"
-        openPanel.message = "Choose the destination folder for installation."
+        openPanel.prompt = .l(.locationPromptTitle)
+        openPanel.message = .l(.locationPromptDescription)
 
         if let window = view.window {
             openPanel.beginSheetModal(for: window) { [weak self] response in

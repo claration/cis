@@ -1,0 +1,381 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "back" : {
+      "comment" : "“Back” button",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "< Back"
+          }
+        }
+      }
+    },
+    "cancel" : {
+      "comment" : "“Cancel” button",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "duplicateWindow" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make sure an existing installer window is closed!"
+          }
+        }
+      }
+    },
+    "finish" : {
+      "comment" : "“Finish” button",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish"
+          }
+        }
+      }
+    },
+    "finishedDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$(appName)@ has been installed on your %2$(model)@.\n\nClick Finish to close Setup."
+          }
+        }
+      }
+    },
+    "finishedOptionRun" : {
+      "comment" : "Run Twitter",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run %1$(appName)@"
+          }
+        }
+      }
+    },
+    "finishedTitle" : {
+      "comment" : "Completing Twitter Setup",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completing %1$(appName)@ Setup"
+          }
+        }
+      }
+    },
+    "iAgree" : {
+      "comment" : "“I Agree” button",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I Agree"
+          }
+        }
+      }
+    },
+    "install" : {
+      "comment" : "“Install” button",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Install"
+          }
+        }
+      }
+    },
+    "installingDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please wait while %1$(appName)@ is being installed."
+          }
+        }
+      }
+    },
+    "installingIdle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idle"
+          }
+        }
+      }
+    },
+    "installingSuccessful" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installation completed successfully."
+          }
+        }
+      }
+    },
+    "installingTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installing"
+          }
+        }
+      }
+    },
+    "licenseAcceptRead" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Press Page Down to see the rest of the agreement."
+          }
+        }
+      }
+    },
+    "licenseAcceptRequired" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you accept the terms of the agreement, click I Agree to continue. You must accept the agreement to install %1$(appName)@."
+          }
+        }
+      }
+    },
+    "licenseDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please review the license terms before installing %1$(appName)@."
+          }
+        }
+      }
+    },
+    "licenseTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "License Agreement"
+          }
+        }
+      }
+    },
+    "locationBrowseButton" : {
+      "comment" : "“Browse...” button",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Browse..."
+          }
+        }
+      }
+    },
+    "locationBrowseTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Destination Folder"
+          }
+        }
+      }
+    },
+    "locationDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose the folder in which to install %1$(appName)@."
+          }
+        }
+      }
+    },
+    "locationPromptDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose the destination folder for installation."
+          }
+        }
+      }
+    },
+    "locationPromptTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select"
+          }
+        }
+      }
+    },
+    "locationSpaceAvailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space Available: %1$(formattedBytes)@"
+          }
+        }
+      }
+    },
+    "locationSpaceRequired" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space Required: %1$(formattedBytes)@"
+          }
+        }
+      }
+    },
+    "locationTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose Install Location"
+          }
+        }
+      }
+    },
+    "next" : {
+      "comment" : "“Next >” button",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next >"
+          }
+        }
+      }
+    },
+    "noThanks" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Thanks"
+          }
+        }
+      }
+    },
+    "open" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open %1$(appName)@"
+          }
+        }
+      }
+    },
+    "openInstead" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Would you like to open this file in %1$(appName)@ instead?"
+          }
+        }
+      }
+    },
+    "setup" : {
+      "comment" : "Twitter Setup",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$(appName)@ Setup"
+          }
+        }
+      }
+    },
+    "showDetails" : {
+      "comment" : "“Show Details” button",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show Details"
+          }
+        }
+      }
+    },
+    "welcomeDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Setup will guide you through the installation process of %1$(appName)@.\n\nIt is recommended you close all other applications before starting Setup. This will make it possible to update relevant system files without having to reboot your %2$(model)@.\n\nClick Next to continue."
+          }
+        }
+      }
+    },
+    "welcomeTitle" : {
+      "comment" : "Welcome to Twitter Setup",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome to %1$(appName)@ Setup"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

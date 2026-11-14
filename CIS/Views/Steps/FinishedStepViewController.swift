@@ -8,11 +8,11 @@
 internal import AppKit
 
 internal final class FinishedStepViewController: WizardStepViewController {
-    internal var onOptionChecked: ((Bool) -> Void)?
+    internal var runOptionChecked: ((Bool) -> Void)?
 
     // MARK: Views
 
-    internal let actionCheckbox: NSButton = {
+    internal let runCheckbox: NSButton = {
         let checkbox = NSButton(checkboxWithTitle: "", target: nil, action: nil)
         checkbox.translatesAutoresizingMaskIntoConstraints = false
         return checkbox
@@ -23,15 +23,14 @@ internal final class FinishedStepViewController: WizardStepViewController {
     internal override init(dmg: DMG) {
         super.init(dmg: dmg)
 
-        self.titleLabel.stringValue = "Completing \(dmg.name) Setup"
-        self.descriptionLabel.stringValue = """
-        \(dmg.name) has been installed on your \(ProcessInfo.processInfo.marketingModel).
+        self.titleLabel.stringValue = .l(.finishedTitle(appName: dmg.name))
+        self.descriptionLabel.stringValue = .l(.finishedDescription(
+            appName: dmg.name,
+            model: ProcessInfo.processInfo.marketingModel
+        ))
 
-        Click Finish to close Setup.
-        """
-
-        self.actionCheckbox.title = "Run \(dmg.name)"
-        self.actionCheckbox.state = .off
+        self.runCheckbox.title = .l(.finishedOptionRun(appName: dmg.name))
+        self.runCheckbox.state = .off
     }
 
     internal required init?(coder: NSCoder) {
@@ -41,21 +40,21 @@ internal final class FinishedStepViewController: WizardStepViewController {
     internal override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.addSubview(actionCheckbox)
+        view.addSubview(runCheckbox)
 
         NSLayoutConstraint.activate([
-            actionCheckbox.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 20),
-            actionCheckbox.leadingAnchor.constraint(equalTo: descriptionLabel.leadingAnchor)
+            runCheckbox.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 20),
+            runCheckbox.leadingAnchor.constraint(equalTo: descriptionLabel.leadingAnchor)
         ])
 
-        actionCheckbox.target = self
-        actionCheckbox.action = #selector(handleCheckboxTapped)
+        runCheckbox.target = self
+        runCheckbox.action = #selector(runCheckboxTapped)
     }
 
     // the `actionCheckbox` value should match the default value in
     // InstallerViewController()
-    @objc private func handleCheckboxTapped(_ sender: NSButton) {
+    @objc private func runCheckboxTapped(_ sender: NSButton) {
         let isChecked = (sender.state == .on)
-        onOptionChecked?(isChecked)
+        runOptionChecked?(isChecked)
     }
 }

@@ -13,7 +13,7 @@ internal final class LicenseStepViewController: BannerStepViewController {
     // MARK: Views
 
     private let topMessageLabel: NSTextField = {
-        let label = NSTextField(wrappingLabelWithString: "Press Page Down to see the rest of the agreement.")
+        let label = NSTextField(wrappingLabelWithString: .l(.licenseAcceptRead))
         label.font = NSFont.systemFont(ofSize: 13)
         return label
     }()
@@ -41,11 +41,9 @@ internal final class LicenseStepViewController: BannerStepViewController {
     internal override init(dmg: DMG) {
         super.init(dmg: dmg)
 
-        let appName = self.dmg.name
-
-        self.headerView.titleLabel.stringValue = "License Agreement"
-        self.headerView.descriptionLabel.stringValue = "Please review the license terms before installing \(appName)."
-        self.bottomMessageLabel.stringValue = "If you accept the terms of the agreement, click I Agree to continue. You must accept the agreement to install \(appName)."
+        self.headerView.titleLabel.stringValue = .l(.licenseTitle)
+        self.headerView.descriptionLabel.stringValue = .l(.licenseDescription(appName: dmg.name))
+        self.bottomMessageLabel.stringValue = .l(.licenseAcceptRequired(appName: dmg.name))
 
         self.licenseTextView.isEditable = false
         self.licenseTextView.isSelectable = true

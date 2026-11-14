@@ -61,19 +61,19 @@ internal final class InstallerViewController: NSViewController {
     }()
 
     private let cancelButton: NSButton = {
-        let button = NSButton(title: "Cancel", target: nil, action: #selector(cancelClicked))
+        let button = NSButton(title: .l(.cancel), target: nil, action: #selector(cancelClicked))
         button.bezelStyle = .rounded
         return button
     }()
 
     private let backButton: NSButton = {
-        let button = NSButton(title: "< Back", target: nil, action: #selector(backClicked))
+        let button = NSButton(title: .l(.back), target: nil, action: #selector(backClicked))
         button.bezelStyle = .rounded
         return button
     }()
 
     private let nextButton: NSButton = {
-        let button = NSButton(title: "Next >", target: nil, action: #selector(nextClicked))
+        let button = NSButton(title: .l(.next), target: nil, action: #selector(nextClicked))
         button.bezelStyle = .rounded
         button.keyEquivalent = "\r"
         return button
@@ -159,10 +159,10 @@ internal final class InstallerViewController: NSViewController {
         switch step {
         case .welcome:
             newVC = WelcomeStepViewController(dmg: dmg)
-            nextButton.title = "Next >"
+            nextButton.title = .l(.next)
         case .license:
             newVC = LicenseStepViewController(dmg: dmg)
-            nextButton.title = "I Agree"
+            nextButton.title = .l(.iAgree)
         case .apps:
             let appPickerVC = AppPickerStepViewController(dmg: dmg)
             // Update Next button state whenever checkboxes are toggled
@@ -171,12 +171,12 @@ internal final class InstallerViewController: NSViewController {
                 self.nextButton.isEnabled = !self.dmg.nodesToInstall.isEmpty
             }
             newVC = appPickerVC
-            nextButton.title = "Next >"
+            nextButton.title = .l(.next)
             // Initial check when loading the apps step
             nextButton.isEnabled = !dmg.nodesToInstall.isEmpty
         case .location:
             newVC = LocationStepViewController(dmg: dmg)
-            nextButton.title = "Install"
+            nextButton.title = .l(.install)
         case .installing:
             let installVC = InstallingStepViewController(dmg: dmg)
             installVC.onCompletion = { [weak self] in
@@ -187,16 +187,16 @@ internal final class InstallerViewController: NSViewController {
             backButton.isEnabled = false
             nextButton.isEnabled = false
             cancelButton.isEnabled = false
-            nextButton.title = "Next >"
+            nextButton.title = .l(.next)
         case .finished:
             let finishedVC = FinishedStepViewController(dmg: dmg)
-            finishedVC.onOptionChecked = { isChecked in
+            finishedVC.runOptionChecked = { isChecked in
                 self.launchAppsWhenFinished = isChecked
             }
             newVC = finishedVC
             backButton.isEnabled = false
             cancelButton.isEnabled = false
-            nextButton.title = "Finish"
+            nextButton.title = .l(.finish)
         }
 
         switchContent(to: newVC)
