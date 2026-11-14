@@ -48,6 +48,17 @@
         }
       }
     },
+    "finishedDeleteDiskImage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move ‘%1$(pathName)@’ to trash"
+          }
+        }
+      }
+    },
     "finishedDescription" : {
       "extractionState" : "manual",
       "localizations" : {

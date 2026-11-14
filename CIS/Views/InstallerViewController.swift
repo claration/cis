@@ -12,6 +12,7 @@ internal final class InstallerViewController: NSViewController {
 
     private var currentStepIndex = 0
     private var launchAppsWhenFinished = false
+    private var deleteDmgWhenFinished = true
 
     private enum InstallerStep {
         case welcome
@@ -190,8 +191,11 @@ internal final class InstallerViewController: NSViewController {
             nextButton.title = .l(.next)
         case .finished:
             let finishedVC = FinishedStepViewController(dmg: dmg)
-            finishedVC.runOptionChecked = { isChecked in
-                self.launchAppsWhenFinished = isChecked
+            finishedVC.runOptionChecked = {
+                self.launchAppsWhenFinished = $0
+            }
+            finishedVC.deleteOptionChecked = {
+                self.deleteDmgWhenFinished = $0
             }
             newVC = finishedVC
             backButton.isEnabled = false
@@ -235,6 +239,25 @@ internal final class InstallerViewController: NSViewController {
                 }
             }
 
+            if deleteDmgWhenFinished {
+                do {
+                    try FileManager.default.trashItem(at: dmg.path, resultingItemURL: nil)
+                    Process.runProcess(
+                        executable: "/usr/bin/afplay",
+                        arguments: [
+                            "/System/Library/Components/CoreAudio.component/Contents/SharedSupport/SystemSounds/dock/drag to trash.aif"
+                        ],
+                        waitUntilExit: false
+                    )
+                } catch {
+                    NSAlert.showAlert(
+                        title: "Failed to Delete Disk Image File",
+                        message: "Error: " + error.localizedDescription,
+                        style: .warning
+                    )
+                }
+            }
+
             NSApp.terminate(nil)
             return
         }
@@ -242,3 +265,4 @@ internal final class InstallerViewController: NSViewController {
         loadStep(at: currentStepIndex + 1)
     }
 }
+

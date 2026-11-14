@@ -15,8 +15,9 @@ extension Process {
     @discardableResult
     internal static func runProcess(
         executable: String,
-        arguments: [String]
-    ) -> (success: Bool, output: String) {
+        arguments: [String],
+        waitUntilExit: Bool = true
+    ) -> (success: Bool, output: String, process: Process?) {
         let task = Self()
         task.executableURL = URL(fileURLWithPath: executable)
         task.arguments = arguments
@@ -27,14 +28,17 @@ extension Process {
 
         do {
             try task.run()
-            task.waitUntilExit()
 
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            let output = String(data: data, encoding: .utf8) ?? ""
-
-            return (task.terminationStatus == 0, output.trimmingCharacters(in: .whitespacesAndNewlines))
+            if waitUntilExit {
+                task.waitUntilExit()
+                let data = pipe.fileHandleForReading.readDataToEndOfFile()
+                let output = String(data: data, encoding: .utf8) ?? ""
+                return (task.terminationStatus == 0, output.trimmingCharacters(in: .whitespacesAndNewlines), nil)
+            } else {
+                return (false, "", task)
+            }
         } catch {
-            return (false, error.localizedDescription)
+            return (false, error.localizedDescription, nil)
         }
     }
 }

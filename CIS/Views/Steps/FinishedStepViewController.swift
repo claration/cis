@@ -9,12 +9,17 @@ internal import AppKit
 
 internal final class FinishedStepViewController: WizardStepViewController {
     internal var runOptionChecked: ((Bool) -> Void)?
+    internal var deleteOptionChecked: ((Bool) -> Void)?
 
     // MARK: Views
 
     internal let runCheckbox: NSButton = {
         let checkbox = NSButton(checkboxWithTitle: "", target: nil, action: nil)
-        checkbox.translatesAutoresizingMaskIntoConstraints = false
+        return checkbox
+    }()
+
+    internal let deleteCheckbox: NSButton = {
+        let checkbox = NSButton(checkboxWithTitle: "", target: nil, action: nil)
         return checkbox
     }()
 
@@ -30,7 +35,9 @@ internal final class FinishedStepViewController: WizardStepViewController {
         ))
 
         self.runCheckbox.title = .l(.finishedOptionRun(appName: dmg.name))
+        self.deleteCheckbox.title = .l(.finishedDeleteDiskImage(pathName: dmg.path.lastPathComponent))
         self.runCheckbox.state = .off
+        self.deleteCheckbox.state = .on
     }
 
     internal required init?(coder: NSCoder) {
@@ -40,21 +47,34 @@ internal final class FinishedStepViewController: WizardStepViewController {
     internal override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.addSubview(runCheckbox)
+        [runCheckbox, deleteCheckbox].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview($0)
+            $0.target = self
+        }
 
         NSLayoutConstraint.activate([
             runCheckbox.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 20),
-            runCheckbox.leadingAnchor.constraint(equalTo: descriptionLabel.leadingAnchor)
+            runCheckbox.leadingAnchor.constraint(equalTo: descriptionLabel.leadingAnchor),
+            deleteCheckbox.topAnchor.constraint(equalTo: runCheckbox.bottomAnchor, constant: 10),
+            deleteCheckbox.leadingAnchor.constraint(equalTo: descriptionLabel.leadingAnchor)
         ])
 
-        runCheckbox.target = self
         runCheckbox.action = #selector(runCheckboxTapped)
+        deleteCheckbox.action = #selector(deleteCheckboxTapped)
     }
 
-    // the `actionCheckbox` value should match the default value in
+    // the `runCheckbox` value should match the default value in
     // InstallerViewController()
     @objc private func runCheckboxTapped(_ sender: NSButton) {
         let isChecked = (sender.state == .on)
         runOptionChecked?(isChecked)
+    }
+
+    // the `deleteCheckbox` value should match the default value in
+    // InstallerViewController()
+    @objc private func deleteCheckboxTapped(_ sender: NSButton) {
+        let isChecked = (sender.state == .on)
+        deleteOptionChecked?(isChecked)
     }
 }
