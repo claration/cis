@@ -5,9 +5,9 @@
 //  Created by samsam on 11/12/26.
 //
 
-internal import struct Foundation.URL
-internal import class Foundation.Process
-internal import class Foundation.Pipe
+import struct Foundation.URL
+import class Foundation.Process
+import class Foundation.Pipe
 
 extension Process {
 

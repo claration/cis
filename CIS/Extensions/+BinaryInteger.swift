@@ -5,7 +5,7 @@
 //  Created by samsam on 11/12/26.
 //
 
-internal import class Foundation.ByteCountFormatter
+import class Foundation.ByteCountFormatter
 
 extension BinaryInteger {
     /// BinaryInteger in formatted bytes (i.e. 45.5 GB or 285.2 MB).
