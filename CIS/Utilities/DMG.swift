@@ -100,7 +100,7 @@ internal final class DMG {
                 app.kind == .directory,
                 app.name.lowercased().hasSuffix(".app")
             else {
-                await onProgress("Failed to identify: Not an app!")
+                await onProgress("Error: Not an app!")
                 throw DMGError.notAnApp(app.name)
             }
 
@@ -118,7 +118,7 @@ internal final class DMG {
                 }
             } catch {
                 try? fm.removeItem(at: staging)
-                await onProgress("Failed to extract: \(error.localizedDescription)")
+                await onProgress("Error: \(error.localizedDescription)")
                 throw error
             }
             installed.append(target)

@@ -26,7 +26,7 @@ extension NSWorkspace {
             if let error {
                 NSAlert.showAlert(
                     title: "Failed to Launch App",
-                    message: error.localizedDescription,
+                    message: "Error: " + error.localizedDescription,
                     style: .warning
                 )
             }
@@ -41,7 +41,7 @@ extension NSWorkspace {
             if let error = error {
                 NSAlert.showAlert(
                     title: "Failed to Set Default Application",
-                    message: error.localizedDescription,
+                    message: "Error: " + error.localizedDescription,
                     style: .warning
                 )
                 return

@@ -14,7 +14,7 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
 
     internal func applicationDidFinishLaunching(_ aNotification: Notification) {
         #if DEBUG
-        let debugDMGPath = URL(fileURLWithPath: "/Users/petals/Downloads/reaper767_universal.dmg")
+        let debugDMGPath = URL(fileURLWithPath: "/Users/petals/Documents/stupiddiskimageinstaller/Examples/Bezel.dmg")
         if FileManager.default.fileExists(atPath: debugDMGPath.relativePath) {
             launchedWithDMG = true
             openInstallerWindow(with: debugDMGPath)
@@ -63,7 +63,7 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
         if let window {
             NSAlert.showAlert(
                 title: "Failed to Open DMG File",
-                message: "Make sure an existing installer window is closed!",
+                message: .l(.duplicateWindow),
                 style: .warning
             )
             window.makeKeyAndOrderFront(nil)
@@ -82,7 +82,7 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
                 defer: false
             )
             window.center()
-            window.title = "\(dmg.name) Setup"
+            window.title = .l(.setup(appName: dmg.name))
             window.contentViewController = installerVC
 
             window.makeKeyAndOrderFront(nil)
@@ -96,9 +96,13 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
         } catch {
             NSAlert.showAlert(
                 title: "Failed to Open DMG File",
-                message: "\(error.localizedDescription)\n\nWould you like to open this file in Disk Image Mounter instead?",
+                message: """
+                Error: \(error.localizedDescription)
+                
+                \(String.l(.openInstead(appName: "Disk Image Mounter")))
+                """,
                 style: .critical,
-                buttonTitles: ["Open Disk Image Mounter", "No Thanks"]
+                buttonTitles: [.l(.open(appName: "Disk Image Mounter")), .l(.noThanks)]
             ) { response in
                 if response == .alertFirstButtonReturn {
                     let result = Process.runProcess(
