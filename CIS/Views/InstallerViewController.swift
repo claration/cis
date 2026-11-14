@@ -25,9 +25,11 @@ internal final class InstallerViewController: NSViewController {
 
     private lazy var steps: [InstallerStep] = {
         var list: [InstallerStep] = [.welcome]
+
         if !dmg.licenses.isEmpty {
             list.append(.license)
         }
+
         list.append(contentsOf: [.apps, .location, .installing, .finished])
         return list
     }()
@@ -166,22 +168,19 @@ internal final class InstallerViewController: NSViewController {
             nextButton.title = .l(.iAgree)
         case .apps:
             let appPickerVC = AppPickerStepViewController(dmg: dmg)
-            // Update Next button state whenever checkboxes are toggled
-            appPickerVC.onSelectionChanged = { [weak self] in
-                guard let self = self else { return }
+            appPickerVC.onSelectionChanged = {
                 self.nextButton.isEnabled = !self.dmg.nodesToInstall.isEmpty
             }
             newVC = appPickerVC
             nextButton.title = .l(.next)
-            // Initial check when loading the apps step
             nextButton.isEnabled = !dmg.nodesToInstall.isEmpty
         case .location:
             newVC = LocationStepViewController(dmg: dmg)
             nextButton.title = .l(.install)
         case .installing:
             let installVC = InstallingStepViewController(dmg: dmg)
-            installVC.onCompletion = { [weak self] in
-                self?.nextButton.isEnabled = true
+            installVC.onCompletion = {
+                self.nextButton.isEnabled = true
             }
             installVC.startInstallation()
             newVC = installVC
@@ -242,6 +241,7 @@ internal final class InstallerViewController: NSViewController {
             if deleteDmgWhenFinished {
                 do {
                     try FileManager.default.trashItem(at: dmg.path, resultingItemURL: nil)
+                    // funny sound
                     Process.runProcess(
                         executable: "/usr/bin/afplay",
                         arguments: [

@@ -228,9 +228,6 @@ static BOOL nodeRecord(const uint8_t *node, uint32_t nodeSize, uint16_t numRecor
     return tree;
 }
 
-/// Descends to the first leaf record that does not sort before the target
-/// then walks the leaf chain calling `visit` for every record where
-/// compare() == 0, stopping at the first record that sorts after.
 - (BOOL)enumerateTree:(HFSBTree *)tree matching:(HFSKeyCompare)compare visitor:(HFSRecordVisitor)visit error:(NSError **)error {
     if (tree.rootNode == 0) return YES; // empty tree
     const uint32_t nodeSize = tree.nodeSize;
@@ -286,8 +283,6 @@ corrupt:
     if (error) *error = DMGMakeError(DMGParserErrorInvalidContainer, @"Corrupt B-tree record.");
     return NO;
 }
-
-#pragma mark - Public API
 
 - (nullable DMGNode *)nodeFromKey:(const uint8_t *)key keyLen:(uint16_t)keyLen record:(const uint8_t *)rec recordLen:(uint16_t)recLen {
     if (keyLen < 6 || recLen < 2) return nil;

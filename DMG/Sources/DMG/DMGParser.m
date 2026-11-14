@@ -357,7 +357,7 @@ static NSDictionary<NSNumber *, NSData *> *resourcesByID(id list) {
     return data;
 }
 
-/// Must be called with _lock held. Returns the decoded chunk (valid until the lock is released).
+/// Must be called with _lock held.
 - (const uint8_t *)decodedBufferForChunk:(NSUInteger)idx error:(NSError **)error {
     DMGCacheSlot *victim = &_cache[0];
     for (int i = 0; i < kCacheSlots; i++) {
@@ -446,9 +446,9 @@ static NSDictionary<NSNumber *, NSData *> *resourcesByID(id list) {
 
 #pragma mark - License
 
-//   'LPic' 5000  language table: defaultRegion(2) count(2) then count x { region(2), idOffset(2), twoByte(2) }
-//   'TEXT' / 'RTF ' 5000+idOffset  text
-//   'STR#' 5000+idOffset           button labels
+// 'LPic' 5000  language table: defaultRegion(2) count(2) then count x { region(2), idOffset(2), twoByte(2) }
+// 'TEXT' / 'RTF ' 5000+idOffset  text
+// 'STR#' 5000+idOffset           button labels
 - (nullable NSArray<DMGLicense *> *)licenseAgreementsWithError:(NSError **)error {
     if (_xmlLength == 0) return @[];
 

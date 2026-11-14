@@ -14,7 +14,7 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
 
     internal func applicationDidFinishLaunching(_ aNotification: Notification) {
         #if DEBUG
-        let debugDMGPath = URL(fileURLWithPath: "/Users/petals/Documents/stupiddiskimageinstaller/Examples/Bezel.dmg")
+        let debugDMGPath = URL(fileURLWithPath: "/Users/petals/Documents/stupiddiskimageinstaller/Examples/Example/Reaper.dmg")
         if FileManager.default.fileExists(atPath: debugDMGPath.relativePath) {
             launchedWithDMG = true
             openInstallerWindow(with: debugDMGPath)
