@@ -115,18 +115,10 @@ internal final class InstallingStepViewController: BannerStepViewController {
 
                 try await self.dmg.install(apps) { statusMessage in
                     await MainActor.run {
-                        let isDone = statusMessage.contains("... 100%")
-
-                        if !isDone {
-                            self.topMessageLabel.stringValue = statusMessage
-                        }
+                        self.topMessageLabel.stringValue = statusMessage
 
                         var text = self.logTextView.string
-                        if isDone, let range = text.range(of: "\n", options: .backwards) {
-                            text = String(text[..<range.lowerBound]) + "\n" + statusMessage
-                        } else {
-                            text = text.isEmpty ? statusMessage : text + "\n" + statusMessage
-                        }
+                        text = text.isEmpty ? statusMessage : text + "\n" + statusMessage
 
                         self.logTextView.string = text
                         self.logTextView.scrollRangeToVisible(NSRange(location: text.count, length: 0))

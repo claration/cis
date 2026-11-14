@@ -133,64 +133,97 @@ internal final class DMG {
         to url: URL,
         onProgress: @escaping (String) async -> Void
     ) async throws {
-        let fm = FileManager.default
+        // GIGA
+        let currentVolume = self.volume
 
-        switch node.kind {
-        case .directory:
-            try fm.createDirectory(
-                at: url, withIntermediateDirectories: false,
-                attributes: [.posixPermissions: 0o755]
-            ) // writable while we fill it
+        try await Task.detached(priority: .utility) {
+            let fm = FileManager.default
 
-            for child in try volume.children(of: node) {
-                let childURL = url.appending(
-                    path: try Self.diskName(child.name),
-                    directoryHint: child.kind == .directory ? .isDirectory : .notDirectory
+            switch node.kind {
+            case .directory:
+                await onProgress("Extract: \(node.name)")
+
+                try fm.createDirectory(
+                    at: url, withIntermediateDirectories: false,
+                    attributes: [.posixPermissions: 0o755]
                 )
-                try await copy(child, to: childURL, onProgress: onProgress)
-            }
 
-            try fm.setAttributes(Self.attributes(for: node), ofItemAtPath: url.path)
-        case .symlink:
-            let data = try volume.readData(of: node, offset: 0, length: 4096)
+                let children = try currentVolume.children(of: node)
 
-            let target = String(decoding: data, as: UTF8.self).replacingOccurrences(of: "\0", with: "")
-            guard !target.isEmpty else {
-                throw DMGError.invalidSymlink(node.name)
-            }
-
-            try fm.createSymbolicLink(atPath: url.path, withDestinationPath: target)
-        case .file:
-            await onProgress("Extract: \(node.name)")
-
-            guard fm.createFile(atPath: url.path, contents: nil, attributes: [.posixPermissions: 0o600]) else {
-                throw CocoaError(.fileWriteUnknown, userInfo: [NSFilePathErrorKey: url.path])
-            }
-            let handle = try FileHandle(forWritingTo: url)
-            defer {
-                try? handle.close()
-            }
-
-            var offset: UInt64 = 0
-            let chunkSize = 1 << 20 // copy files 1 MB at a time
-
-            while offset < node.size {
-                try autoreleasepool { // keeps memory flat for large files
-                    let length = Int(min(UInt64(chunkSize), node.size - offset))
-                    let chunk = try volume.readData(of: node, offset: offset, length: UInt(length))
-                    if chunk.isEmpty { throw DMGError.shortRead(node.name) }
-                    try handle.write(contentsOf: chunk)
-                    offset += UInt64(chunk.count)
+                try await withThrowingTaskGroup(of: Void.self) { group in
+                    for child in children {
+                        group.addTask {
+                            let childURL = await url.appending(
+                                path: try Self.diskName(child.name),
+                                directoryHint: child.kind == .directory ? .isDirectory : .notDirectory
+                            )
+                            try await self.copy(child, to: childURL, onProgress: onProgress)
+                        }
+                    }
+                    try await group.waitForAll()
                 }
+
+                try await fm.setAttributes(Self.attributes(for: node), ofItemAtPath: url.path)
+            case .symlink:
+                let data = try currentVolume.readData(of: node, offset: 0, length: 4096)
+                let target = String(decoding: data, as: UTF8.self).replacingOccurrences(of: "\0", with: "")
+                guard !target.isEmpty else {
+                    throw DMGError.invalidSymlink(node.name)
+                }
+                try fm.createSymbolicLink(atPath: url.path, withDestinationPath: target)
+
+            case .file:
+                let path = url.path
+                let fd = open(path, O_CREAT | O_WRONLY | O_TRUNC, 0o600)
+                guard fd >= 0 else {
+                    throw CocoaError(.fileWriteUnknown, userInfo: [NSFilePathErrorKey: path])
+                }
+
+                var closed = false
+                defer {
+                    if !closed { close(fd) }
+                }
+
+                if node.size > 0 {
+                    _ = ftruncate(fd, off_t(node.size))
+                }
+                _ = fcntl(fd, F_NOCACHE, 1)
+
+                var offset: UInt64 = 0
+                let chunkSize = 4 << 20 // 4 MB chunks
+
+                while offset < node.size {
+                    try autoreleasepool { // keeps memory flat for large files
+                        let length = Int(min(UInt64(chunkSize), node.size - offset))
+                        let chunk = try currentVolume.readData(of: node, offset: offset, length: UInt(length))
+                        if chunk.isEmpty { throw DMGError.shortRead(node.name) }
+
+                        try chunk.withUnsafeBytes { rawBuffer in
+                            guard let baseAddress = rawBuffer.baseAddress else { return }
+                            var totalWritten = 0
+                            let bytesToWrite = chunk.count
+
+                            while totalWritten < bytesToWrite {
+                                let written = write(fd, baseAddress.advanced(by: totalWritten), bytesToWrite - totalWritten)
+                                if written < 0 {
+                                    throw CocoaError(.fileWriteUnknown, userInfo: [NSFilePathErrorKey: path])
+                                }
+                                totalWritten += Int(written)
+                            }
+                        }
+
+                        offset += UInt64(chunk.count)
+                    }
+                }
+
+                close(fd)
+                closed = true
+
+                try await fm.setAttributes(Self.attributes(for: node), ofItemAtPath: url.path)
+            @unknown default:
+                break
             }
-
-            try handle.close()
-            try fm.setAttributes(Self.attributes(for: node), ofItemAtPath: url.path)
-
-            await onProgress("Extract: \(node.name)... 100%")
-        @unknown default:
-            break
-        }
+        }.value
     }
 
     private static func attributes(for node: DMGNode) -> [FileAttributeKey: Any] {
