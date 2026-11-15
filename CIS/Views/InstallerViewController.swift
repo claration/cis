@@ -26,7 +26,7 @@ internal final class InstallerViewController: NSViewController {
     private lazy var steps: [InstallerStep] = {
         var list: [InstallerStep] = [.welcome]
 
-        if !dmg.licenses.isEmpty {
+        if (dmg.license != nil) {
             list.append(.license)
         }
 
@@ -234,13 +234,13 @@ internal final class InstallerViewController: NSViewController {
             // Launches all installed apps
             if launchAppsWhenFinished {
                 for node in dmg.nodesToInstall {
-                    NSWorkspace.launchNode(node, parentPath: dmg.destinationFolderPath)
+                    NSWorkspace.launchNode(node, parentPath: dmg.destinationPath)
                 }
             }
 
             if deleteDmgWhenFinished {
                 do {
-                    try FileManager.default.trashItem(at: dmg.path, resultingItemURL: nil)
+                    try FileManager.default.trashItem(at: dmg.filePath, resultingItemURL: nil)
                     // funny sound
                     Process.runProcess(
                         executable: "/usr/bin/afplay",

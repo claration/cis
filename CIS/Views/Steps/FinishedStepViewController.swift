@@ -35,7 +35,7 @@ internal final class FinishedStepViewController: WizardStepViewController {
         ))
 
         self.runCheckbox.title = .l(.finishedOptionRun(appName: dmg.name))
-        self.deleteCheckbox.title = .l(.finishedDeleteDiskImage(pathName: dmg.path.lastPathComponent))
+        self.deleteCheckbox.title = .l(.finishedDeleteDiskImage(pathName: dmg.filePath.lastPathComponent))
         self.runCheckbox.state = .off
         self.deleteCheckbox.state = .on
     }

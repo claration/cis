@@ -8,17 +8,13 @@
 internal import AppKit
 internal import class DMG.DMGNode
 
-private final class FlippedView: NSView {
-    override var isFlipped: Bool { return true }
-}
-
 internal final class AppPickerStepViewController: BannerStepViewController {
     internal var onSelectionChanged: (() -> Void)?
 
     // MARK: Views
 
     private let topMessageLabel: NSTextField = {
-        let label = NSTextField(wrappingLabelWithString: "Select the applications you would like to install to your \(ProcessInfo.processInfo.marketingModel).")
+        let label = NSTextField(wrappingLabelWithString: .l(.pickerChoose(model: ProcessInfo.processInfo.marketingModel)))
         label.font = NSFont.systemFont(ofSize: 13)
         return label
     }()
@@ -31,22 +27,16 @@ internal final class AppPickerStepViewController: BannerStepViewController {
         return scroll
     }()
 
-    private let containerView: FlippedView = {
-        let view = FlippedView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
+    private let tableView: NSTableView = {
+        let table = NSTableView()
+        table.headerView = nil
+        table.usesAlternatingRowBackgroundColors = true
+        table.backgroundColor = .clear
+        table.rowHeight = 36
+        table.selectionHighlightStyle = .none
+        return table
     }()
 
-    private let stackView: NSStackView = {
-        let stack = NSStackView()
-        stack.orientation = .vertical
-        stack.alignment = .leading
-        stack.spacing = 10
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        return stack
-    }()
-
-    private var checkboxes: [NSButton] = []
     private var availableNodes: [DMGNode] = []
 
     // MARK: Setup
@@ -54,19 +44,33 @@ internal final class AppPickerStepViewController: BannerStepViewController {
     internal override init(dmg: DMG) {
         super.init(dmg: dmg)
 
-        self.headerView.titleLabel.stringValue = "Pick Applications"
-        self.headerView.descriptionLabel.stringValue = "Please pick the applications that you would like to install."
+        self.headerView.titleLabel.stringValue = .l(.pickerTitle)
+        self.headerView.descriptionLabel.stringValue = .l(.pickerDescription)
     }
 
     internal required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    internal override func viewWillAppear() {
+        super.viewWillAppear()
+
+        availableNodes = dmg.nodes
+        tableView.reloadData()
+    }
+
     internal override func viewDidLoad() {
         super.viewDidLoad()
 
-        scrollView.documentView = containerView
-        containerView.addSubview(stackView)
+        let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("AppCellColumn"))
+        column.width = 400
+        column.resizingMask = .autoresizingMask
+        tableView.addTableColumn(column)
+
+        tableView.dataSource = self
+        tableView.delegate = self
+
+        scrollView.documentView = tableView
 
         [topMessageLabel, scrollView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -81,43 +85,48 @@ internal final class AppPickerStepViewController: BannerStepViewController {
             scrollView.topAnchor.constraint(equalTo: topMessageLabel.bottomAnchor, constant: 12),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
-
-            containerView.widthAnchor.constraint(equalTo: scrollView.contentView.widthAnchor),
-
-            stackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 12),
-            stackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
-            stackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
-            stackView.bottomAnchor.constraint(lessThanOrEqualTo: containerView.bottomAnchor, constant: -12)
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20)
         ])
     }
+}
 
-    internal override func viewWillAppear() {
-        super.viewWillAppear()
+extension AppPickerStepViewController: NSTableViewDataSource, NSTableViewDelegate {
 
-        do {
-            availableNodes = try dmg.lookup()
-            populateCheckboxes()
-        } catch {
-            topMessageLabel.stringValue = "Failed to load applications: \(error.localizedDescription)"
-        }
+    // MARK: Delegate
+
+    internal func numberOfRows(in tableView: NSTableView) -> Int {
+        availableNodes.count
     }
 
-    private func populateCheckboxes() {
-        checkboxes.forEach { $0.removeFromSuperview() }
-        checkboxes.removeAll()
+    internal func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        let cellView: AppPickerCellView
 
-        for (index, node) in availableNodes.enumerated() {
-            let checkbox = NSButton(checkboxWithTitle: node.name, target: self, action: #selector(checkboxToggled(_:)))
-
-            let isSelected = dmg.nodesToInstall.contains(where: { $0.name == node.name })
-            checkbox.state = isSelected ? .on : .off
-
-            checkbox.tag = index
-            stackView.addArrangedSubview(checkbox)
-            checkboxes.append(checkbox)
+        if let reused = tableView.makeView(withIdentifier: AppPickerCellView.reuseIdentifier, owner: self) as? AppPickerCellView {
+            cellView = reused
+        } else {
+            cellView = AppPickerCellView(frame: .zero)
+            cellView.identifier = AppPickerCellView.reuseIdentifier
         }
+
+        let node = availableNodes[row]
+        let isSelected = dmg.nodesToInstall.contains(where: { $0.name == node.name })
+
+        cellView.configure(
+            with: node,
+            isSelected: isSelected,
+            index: row,
+            target: self,
+            action: #selector(checkboxToggled(_:)),
+            volume: dmg.volume
+        )
+
+        return cellView
     }
+}
+
+extension AppPickerStepViewController {
+
+    // MARK: Actions
 
     @objc private func checkboxToggled(_ sender: NSButton) {
         let index = sender.tag
@@ -136,4 +145,5 @@ internal final class AppPickerStepViewController: BannerStepViewController {
 
         onSelectionChanged?()
     }
+
 }

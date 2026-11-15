@@ -71,7 +71,7 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         do {
-            let dmg = try DMG(path: dmgPath)
+            let dmg = try DMG(for: dmgPath)
 
             let installerVC = InstallerViewController(dmg: dmg)
 

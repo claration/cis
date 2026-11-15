@@ -62,7 +62,7 @@ internal final class LocationStepViewController: BannerStepViewController {
 
         self.headerView.titleLabel.stringValue = .l(.locationTitle)
         self.headerView.descriptionLabel.stringValue = .l(.locationDescription(appName: dmg.name))
-        self.pathTextField.stringValue = self.dmg.destinationFolderPath.relativePath
+        self.pathTextField.stringValue = self.dmg.destinationPath.relativePath
         self.spaceRequiredLabel.stringValue = .l(.locationSpaceRequired(
             formattedBytes: dmg.virtualSize.formattedBytes()
         ))
@@ -141,7 +141,7 @@ extension LocationStepViewController {
                     response == .OK,
                     let url = openPanel.url
                 {
-                    self?.dmg.destinationFolderPath = url
+                    self?.dmg.destinationPath = url
                     self?.pathTextField.stringValue = url.relativePath
                 }
             }
@@ -150,7 +150,7 @@ extension LocationStepViewController {
                 openPanel.runModal() == .OK,
                 let url = openPanel.url
             {
-                self.dmg.destinationFolderPath = url
+                self.dmg.destinationPath = url
                 self.pathTextField.stringValue = url.relativePath
             }
         }

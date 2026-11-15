@@ -63,8 +63,10 @@ internal final class InstallerHeaderView: NSView {
     init(dmg: DMG) {
         super.init(frame: .zero)
 
-        let customColor = dmg.color ?? .systemPink
-        gradientLayer.colors = [customColor.cgColor, NSColor.white.cgColor]
+        gradientLayer.colors = [
+            dmg.color.cgColor,
+            NSColor.white.cgColor
+        ]
         iconImageView.image = dmg.icon ?? NSApp.applicationIconImage
 
         setupView()

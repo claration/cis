@@ -340,6 +340,39 @@
         }
       }
     },
+    "pickerChoose" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select the applications you would like to install to your %1$(model)@."
+          }
+        }
+      }
+    },
+    "pickerDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please pick the applications that you would like to install."
+          }
+        }
+      }
+    },
+    "pickerTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick Applications"
+          }
+        }
+      }
+    },
     "setup" : {
       "comment" : "Twitter Setup",
       "extractionState" : "manual",

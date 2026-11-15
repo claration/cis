@@ -51,7 +51,7 @@ internal class WizardStepViewController: NSViewController {
     internal init(dmg: DMG) {
         super.init(nibName: nil, bundle: nil)
 
-        sidebarBackgroundView.layer?.backgroundColor = (dmg.color ?? .systemPink).cgColor
+        sidebarBackgroundView.layer?.backgroundColor = dmg.color.cgColor
         iconImageView.image = dmg.icon ?? NSApp.applicationIconImage
     }
 

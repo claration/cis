@@ -111,9 +111,7 @@ internal final class InstallingStepViewController: BannerStepViewController {
             guard let self = self else { return }
 
             do {
-                let apps = try self.dmg.lookup()
-
-                try await self.dmg.install(apps) { statusMessage in
+                try await self.dmg.installNodes() { statusMessage in
                     await MainActor.run {
                         self.topMessageLabel.stringValue = statusMessage
 

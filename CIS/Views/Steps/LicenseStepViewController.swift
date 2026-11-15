@@ -48,13 +48,13 @@ internal final class LicenseStepViewController: BannerStepViewController {
         self.licenseTextView.isEditable = false
         self.licenseTextView.isSelectable = true
 
-        if let licenseText = extractTextFromLicense(for: dmg.licenses) {
+        if let licenseText = extractTextFromLicense(for: dmg.license) {
             self.licenseTextView.string = licenseText
         }
     }
 
-    private func extractTextFromLicense(for licenses: [DMGLicense]) -> String? {
-        guard let license = dmg.licenses.first else {
+    private func extractTextFromLicense(for license: DMGLicense?) -> String? {
+        guard let license else {
             return nil
         }
 
