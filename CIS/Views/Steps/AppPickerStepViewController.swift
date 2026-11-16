@@ -50,11 +50,6 @@ internal final class AppPickerStepViewController: BannerStepViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    internal override func viewWillAppear() {
-        super.viewWillAppear()
-        tableView.reloadData()
-    }
-
     internal override func viewDidLoad() {
         super.viewDidLoad()
 
