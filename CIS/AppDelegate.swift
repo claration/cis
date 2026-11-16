@@ -80,6 +80,8 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
                 defer: false
             )
 
+            window.representedURL = dmgPath
+
             if dmg.isPkg {
                 window.contentViewController = PKGInstallerViewController(dmg: dmg)
                 window.titlebarAppearsTransparent = true
