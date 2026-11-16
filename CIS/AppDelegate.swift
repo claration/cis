@@ -14,7 +14,7 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
 
     internal func applicationDidFinishLaunching(_ aNotification: Notification) {
         #if DEBUG
-        let debugDMGPath = URL(fileURLWithPath: "/Users/petals/Documents/stupiddiskimageinstaller/Examples/SF-Symbols-27.dmg")
+        let debugDMGPath = URL(fileURLWithPath: "/Users/petals/Documents/stupiddiskimageinstaller/Examples/Discord.dmg")
         if FileManager.default.fileExists(atPath: debugDMGPath.relativePath) {
             launchedWithDMG = true
             openInstallerWindow(with: debugDMGPath)
@@ -86,6 +86,7 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
             } else {
                 window.contentViewController = InstallerViewController(dmg: dmg)
                 window.title = .l(.setup(appName: dmg.name))
+                window.appearance = NSAppearance(named: .aqua)
             }
 
             window.center()

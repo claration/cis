@@ -34,8 +34,6 @@
 			<true/>
 		</dict>
 	</array>
-	<key>NSRequiresAquaSystemAppearance</key>
-	<true/>
 	<key>NSSupportsAutomaticTermination</key>
 	<true/>
 	<key>NSSupportsSuddenTermination</key>
