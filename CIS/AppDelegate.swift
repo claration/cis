@@ -13,6 +13,8 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
     internal var launchedWithDMG = false
 
     internal func applicationDidFinishLaunching(_ aNotification: Notification) {
+        setupMainMenu()
+
         #if DEBUG
         let debugDMGPath = URL(fileURLWithPath: "/Users/petals/Documents/stupiddiskimageinstaller/Examples/Discord.dmg")
         if FileManager.default.fileExists(atPath: debugDMGPath.relativePath) {
@@ -60,15 +62,15 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func openInstallerWindow(with dmgPath: URL) {
-        if let window {
-            NSAlert.showAlert(
-                title: "Failed to Open DMG File",
-                message: .l(.duplicateWindow),
-                style: .warning
-            )
-            window.makeKeyAndOrderFront(nil)
-            return
-        }
+//        if let window {
+//            NSAlert.showAlert(
+//                title: "Failed to Open DMG File",
+//                message: .l(.duplicateWindow),
+//                style: .warning
+//            )
+//            window.makeKeyAndOrderFront(nil)
+//            return
+//        }
 
         do {
             let dmg = try DMG(for: dmgPath)
@@ -96,9 +98,9 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
 
             NSApp.activate(ignoringOtherApps: true)
 
-            if let icon = dmg.icon {
-                NSApplication.shared.setApplicationIconBadgeImage(with: icon)
-            }
+//            if let icon = dmg.icon {
+//                NSApplication.shared.setApplicationIconBadgeImage(with: icon)
+//            }
 
             self.window = window
         } catch {
@@ -120,6 +122,27 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
                 }
             }
         }
+    }
+
+    private func setupMainMenu() {
+        let mainMenu = NSMenu()
+        let appMenuItem = NSMenuItem()
+        let appMenu = NSMenu()
+
+        let aboutItem = NSMenuItem(title: .l(.about(appName: Bundle.main.name)), action: #selector(showAbout(_:)), keyEquivalent: "")
+        aboutItem.target = self
+        appMenu.addItem(aboutItem)
+
+        appMenu.addItem(NSMenuItem.separator())
+
+        let quitItem = NSMenuItem(title: .l(.quit(appName: Bundle.main.name)), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        appMenu.addItem(quitItem)
+
+        appMenuItem.submenu = appMenu
+        mainMenu.addItem(appMenuItem)
+
+        NSApp.windowsMenu = NSMenu()
+        NSApp.mainMenu = mainMenu
     }
 
     @objc private func showAbout(_ sender: Any?) {

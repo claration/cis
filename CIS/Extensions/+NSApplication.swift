@@ -47,7 +47,7 @@ extension NSApplication {
     }
 
     /// Sets mini icon image on the bottom right at runtime.
-    internal func setApplicationIconBadgeImage(with subIcon: NSImage) {
-        self.applicationIconImage = genApplicationIconBadgeImage(with: subIcon)
-    }
+//    internal func setApplicationIconBadgeImage(with subIcon: NSImage) {
+//        self.applicationIconImage = genApplicationIconBadgeImage(with: subIcon)
+//    }
 }
