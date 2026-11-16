@@ -37,8 +37,6 @@ internal final class AppPickerStepViewController: BannerStepViewController {
         return table
     }()
 
-    private var availableNodes: [DMGNode] = []
-
     // MARK: Setup
 
     internal override init(dmg: DMG) {
@@ -54,8 +52,6 @@ internal final class AppPickerStepViewController: BannerStepViewController {
 
     internal override func viewWillAppear() {
         super.viewWillAppear()
-
-        availableNodes = dmg.nodes
         tableView.reloadData()
     }
 
@@ -95,7 +91,7 @@ extension AppPickerStepViewController: NSTableViewDataSource, NSTableViewDelegat
     // MARK: Delegate
 
     internal func numberOfRows(in tableView: NSTableView) -> Int {
-        availableNodes.count
+        dmg.nodes.count
     }
 
     internal func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
@@ -108,7 +104,7 @@ extension AppPickerStepViewController: NSTableViewDataSource, NSTableViewDelegat
             cellView.identifier = AppPickerCellView.reuseIdentifier
         }
 
-        let node = availableNodes[row]
+        let node = dmg.nodes[row]
         let isSelected = dmg.nodesToInstall.contains(where: { $0.name == node.name })
 
         cellView.configure(
@@ -130,11 +126,11 @@ extension AppPickerStepViewController {
 
     @objc private func checkboxToggled(_ sender: NSButton) {
         let index = sender.tag
-        guard index >= 0 && index < availableNodes.count else {
+        guard index >= 0 && index < dmg.nodes.count else {
             return
         }
 
-        let node = availableNodes[index]
+        let node = dmg.nodes[index]
         if sender.state == .on {
             if !dmg.nodesToInstall.contains(where: { $0.name == node.name }) {
                 dmg.nodesToInstall.append(node)
