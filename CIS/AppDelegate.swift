@@ -89,7 +89,7 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
             NSApp.activate(ignoringOtherApps: true)
 
             if let icon = dmg.icon {
-                Self.setBadgedAppIcon(with: icon)
+                NSApplication.shared.setApplicationIconBadgeImage(with: icon)
             }
 
             self.window = window
@@ -105,18 +105,10 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
                 buttonTitles: [.l(.open(appName: "Disk Image Mounter")), .l(.noThanks)]
             ) { response in
                 if response == .alertFirstButtonReturn {
-                    let result = Process.runProcess(
+                    Process.runProcess(
                         executable: "/usr/bin/open",
                         arguments: ["-a", "DiskImageMounter", dmgPath.relativePath]
                     )
-
-                    if !result.success {
-                        NSAlert.showAlert(
-                            title: "Failed to mount DMG",
-                            message: result.output,
-                            style: .warning
-                        )
-                    }
                 }
             }
         }
@@ -124,46 +116,6 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func showAbout(_ sender: Any?) {
         NSApp.orderFrontStandardAboutPanel()
-    }
-}
-
-extension AppDelegate {
-
-    /// Helper function for setting our apps icon at runtime.
-    static internal func setBadgedAppIcon(with subIcon: NSImage) {
-        guard let baseImage = NSApp.applicationIconImage else { return }
-
-        let size = baseImage.size
-        let combinedImage = NSImage(size: size)
-
-        combinedImage.lockFocus()
-
-        baseImage.draw(
-            in: NSRect(origin: .zero, size: size),
-            from: .zero,
-            operation: .sourceOver,
-            fraction: 1.0
-        )
-
-        let subIconSize = size.width * 0.4
-        let padding: CGFloat = size.width * 0
-
-        let subIconRect = NSRect(
-            x: size.width - subIconSize - padding,
-            y: padding,
-            width: subIconSize,
-            height: subIconSize
-        )
-
-        subIcon.draw(
-            in: subIconRect,
-            from: .zero,
-            operation: .sourceOver,
-            fraction: 1.0
-        )
-
-        combinedImage.unlockFocus()
-        NSApplication.shared.applicationIconImage = combinedImage
     }
 }
 

@@ -246,8 +246,7 @@ internal final class InstallerViewController: NSViewController {
                         executable: "/usr/bin/afplay",
                         arguments: [
                             "/System/Library/Components/CoreAudio.component/Contents/SharedSupport/SystemSounds/dock/drag to trash.aif"
-                        ],
-                        waitUntilExit: false
+                        ]
                     )
                 } catch {
                     NSAlert.showAlert(
