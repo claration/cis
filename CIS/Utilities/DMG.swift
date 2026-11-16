@@ -27,6 +27,8 @@ internal final class DMG {
     internal var nodesToInstall: [DMGNode] = []
     internal var destinationPath = URL(filePath: "/Applications")
 
+    internal let isPkg: Bool
+
     // MARK: Setup
 
     internal init(for filePath: URL) throws {
@@ -39,9 +41,7 @@ internal final class DMG {
         self.name = volume.volumeName
         self.virtualSize = parser.virtualSize
 
-        let installableNodes = try volume.children(of: volume.rootNode).filter {
-            $0.kind == .directory && $0.name.lowercased().hasSuffix(".app")
-        }
+        var installableNodes = try volume.nodes(kind: .directory, suffix: ".app")
 
         if let icon = volume.volumeIcon() {
             self.icon = icon
@@ -63,7 +63,20 @@ internal final class DMG {
         }
 
         if installableNodes.isEmpty {
-            throw DMGError.appsUnavailable(self.name)
+            installableNodes = try volume.nodes(kind: .file, suffix: ".pkg")
+
+            print(installableNodes)
+
+            print("installableNodes was empty, but checking for PKG")
+
+            if installableNodes.isEmpty {
+                throw DMGError.appsUnavailable(self.name)
+            } else {
+                print("PKGS EXIST!")
+                self.isPkg = true
+            }
+        } else {
+            self.isPkg = false
         }
 
         self.nodes = installableNodes
@@ -127,6 +140,25 @@ internal final class DMG {
             }
         }
     }
+
+    internal func openNodes() async throws {
+        guard isPkg else {
+            throw DMGError.notAPkg
+        }
+
+        for node in nodesToInstall {
+            let tempPath = FileManager.default.temporaryDirectory.appending(
+                path: ".pkg-\(try node.name.diskSafeName()).pkg"
+            )
+
+            try await node.copy(to: tempPath, from: volume, onProgress: { _ in })
+
+            Process.runProcess(
+                executable: "/usr/bin/open",
+                arguments: ["-a", "Installer", tempPath.relativePath]
+            )
+        }
+    }
 }
 
 // MARK: - DMGError
@@ -138,6 +170,7 @@ internal enum DMGError: LocalizedError {
     case invalidSymlink(String)
     case shortRead(String)
     case appsUnavailable(String)
+    case notAPkg
 
     internal var errorDescription: String? {
         switch self {
@@ -147,6 +180,7 @@ internal enum DMGError: LocalizedError {
         case .invalidSymlink(let name):         "Could not read the target of symlink \"\(name)\"."
         case .shortRead(let name):              "Unexpected end of data while reading \"\(name)\"."
         case .appsUnavailable(let name):        "No applications are available for \"\(name)\"."
+        case .notAPkg:                          "No PKG files available for installation."
         }
     }
 }

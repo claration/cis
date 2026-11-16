@@ -8,11 +8,10 @@
 internal import AppKit
 
 extension NSApplication {
-    /// Sets mini icon image on the bottom right at runtime.
-    internal func setApplicationIconBadgeImage(with subIcon: NSImage) {
-        guard let baseImage = NSApp.applicationIconImage else {
-            return
-        }
+
+    ///
+    internal func genApplicationIconBadgeImage(with subIcon: NSImage) -> NSImage {
+        let baseImage = NSApp.applicationIconImage!
 
         let size = baseImage.size
         let combinedImage = NSImage(size: size)
@@ -44,6 +43,11 @@ extension NSApplication {
         )
 
         combinedImage.unlockFocus()
-        self.applicationIconImage = combinedImage
+        return combinedImage
+    }
+
+    /// Sets mini icon image on the bottom right at runtime.
+    internal func setApplicationIconBadgeImage(with subIcon: NSImage) {
+        self.applicationIconImage = genApplicationIconBadgeImage(with: subIcon)
     }
 }

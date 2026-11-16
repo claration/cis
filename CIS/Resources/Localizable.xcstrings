@@ -373,6 +373,17 @@
         }
       }
     },
+    "pkgInstallingTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extracting “%1$(fileName)@”"
+          }
+        }
+      }
+    },
     "setup" : {
       "comment" : "Twitter Setup",
       "extractionState" : "manual",

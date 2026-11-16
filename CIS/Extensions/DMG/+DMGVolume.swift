@@ -57,7 +57,18 @@ extension DMGVolume {
 
         return DMGLicense(regionCode: 0, textData: data, rtfData: nil, buttonData: nil)
     }
+
+    /// Helper for finding nodes with certain file extensions.
+    internal func nodes(
+        under parent: DMGNode? = nil,
+        kind: DMGNodeKind,
+        suffix: String
+    ) throws -> [DMGNode] {
+        let targetParent = parent ?? rootNode
+        let loweredSuffix = suffix.lowercased()
+
+        return try children(of: targetParent).filter {
+            $0.kind == kind && $0.name.lowercased().hasSuffix(loweredSuffix)
+        }
+    }
 }
-
-
-

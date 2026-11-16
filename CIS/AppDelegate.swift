@@ -14,7 +14,7 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
 
     internal func applicationDidFinishLaunching(_ aNotification: Notification) {
         #if DEBUG
-        let debugDMGPath = URL(fileURLWithPath: "/Users/petals/Documents/stupiddiskimageinstaller/Examples/Discord.dmg")
+        let debugDMGPath = URL(fileURLWithPath: "/Users/petals/Documents/stupiddiskimageinstaller/Examples/SF-Symbols-27.dmg")
         if FileManager.default.fileExists(atPath: debugDMGPath.relativePath) {
             launchedWithDMG = true
             openInstallerWindow(with: debugDMGPath)
@@ -73,19 +73,24 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
         do {
             let dmg = try DMG(for: dmgPath)
 
-            let installerVC = InstallerViewController(dmg: dmg)
-
             let window = NSWindow(
-                contentRect: Self.frame,
+                contentRect: dmg.isPkg ? Self.miniFrame : Self.frame,
                 styleMask: [.titled, .closable, .miniaturizable],
                 backing: .buffered,
                 defer: false
             )
-            window.center()
-            window.title = .l(.setup(appName: dmg.name))
-            window.contentViewController = installerVC
 
+            if dmg.isPkg {
+                window.contentViewController = PKGInstallerViewController(dmg: dmg)
+                window.titlebarAppearsTransparent = true
+            } else {
+                window.contentViewController = InstallerViewController(dmg: dmg)
+                window.title = .l(.setup(appName: dmg.name))
+            }
+
+            window.center()
             window.makeKeyAndOrderFront(nil)
+
             NSApp.activate(ignoringOtherApps: true)
 
             if let icon = dmg.icon {
@@ -122,4 +127,5 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
 extension AppDelegate {
     /// Convenience constant for getting the intended window size/frame.
     static internal let frame = NSRect(x: 0, y: 0, width: 500, height: 360)
+    static internal let miniFrame = NSRect(x: 0, y: 0, width: 400, height: 45)
 }
