@@ -68,14 +68,9 @@ internal final class DMG {
         if installableNodes.isEmpty {
             installableNodes = try volume.nodes(kind: .file, suffix: ".pkg")
 
-            print(installableNodes)
-
-            print("installableNodes was empty, but checking for PKG")
-
             if installableNodes.isEmpty {
                 throw DMGError.appsUnavailable(self.name)
             } else {
-                print("PKGS EXIST!")
                 self.isPkg = true
             }
         } else {

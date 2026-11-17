@@ -4,6 +4,7 @@
 #import <zlib.h>
 #import <bzlib.h>
 #import <compression.h>
+#import <CommonCrypto/CommonCrypto.h>
 #import <fcntl.h>
 #import <os/lock.h>
 #import <sys/stat.h>
@@ -33,9 +34,25 @@ static const size_t kMishHeaderSize = 204;
 static const size_t kMishChunkSize = 40;
 
 static const uint64_t kMaxPlistBytes = 256ull << 20;
-static const uint64_t kMaxDecodedChunkBytes = 64ull << 20; // per-chunk decompressed cap
-static const uint64_t kMaxPackedChunkBytes = 128ull << 20; // bounded memory: 4 decoded chunks
+static const uint64_t kMaxDecodedChunkBytes = 64ull << 20;
+static const uint64_t kMaxPackedChunkBytes = 128ull << 20;
 enum { kCacheSlots = 4 };
+
+// encrcdsa
+//   +0 sig(8)  +8 version  +12 ivSize  +24 keyBits  +52 blockSize  +56 dataSize(8)  +64 dataOffset(8)
+//   +80 keyRecordOffset(8)  (96 in the images seen so far)
+//
+//   +0 kdfAlgorithm (103 = PBKDF2)  +8 iterations  +12 saltLen  +16 salt(32)
+//   +48 blobIVSize  +52 blobIV(32)  +84 blobKeyBits (192 = 3DES)  +100 blobSize  +104 wrapped key blob
+// The blob is 3DES-CBC wrapped under PBKDF2-HMAC-SHA1(password, salt) and holds the AES key followed by a
+// 20-byte HMAC-SHA1 key. Each data block N is AES-CBC with IV = HMAC-SHA1(hmacKey, be32(N))[0..16).
+enum { kEncHeaderSize = 88 };
+enum { kEncRecordFixedSize = 104 };
+static const uint32_t kEncKDFPBKDF2 = 103;
+static const size_t kEncHMACKeySize = 20;
+static const uint32_t kEncMaxIterations = 100000000;
+enum { kEncMaxBlobSize = 256 };
+static const uint64_t kEncSpanBytes = 1ull << 20;
 
 typedef struct {
     uint64_t sectorStart; // absolute virtual sector
@@ -116,9 +133,23 @@ static NSDictionary<NSNumber *, NSData *> *resourcesByID(id list) {
 
     uint64_t _xmlOffset;  // UDIF
     uint64_t _xmlLength;
+
+    // Encryption
+    BOOL _encrypted;
+    uint64_t _physicalSize;
+    uint64_t _cryptDataOffset;
+    uint64_t _cryptCipherLength;
+    uint32_t _cryptBlockSize;
+    uint8_t _aesKey[32];
+    size_t _aesKeyLength;
+    uint8_t _hmacKey[20];
 }
 
 - (nullable instancetype)initWithContentsOfFile:(NSString *)path error:(NSError **)error {
+    return [self initWithContentsOfFile:path passwordHandler:nil error:error];
+}
+
+- (nullable instancetype)initWithContentsOfFile:(NSString *)path passwordHandler:(nullable DMGPasswordHandler)passwordHandler error:(NSError **)error {
     self = [super init];
     if (!self) return nil;
 
@@ -136,9 +167,10 @@ static NSDictionary<NSNumber *, NSData *> *resourcesByID(id list) {
         if (error) *error = DMGMakeError(DMGParserErrorInvalidContainer, @"Not a disk image file.");
         return nil;
     }
-    _fileSize = (uint64_t)st.st_size;
+    _physicalSize = (uint64_t)st.st_size;
+    _fileSize = _physicalSize;
 
-    if (![self parseContainer:error]) {
+    if (![self unlockWithPasswordHandler:passwordHandler error:error] || ![self parseContainer:error]) {
         close(_fd);
         _fd = -1;
         return nil;
@@ -152,6 +184,206 @@ static NSDictionary<NSNumber *, NSData *> *resourcesByID(id list) {
     free(_scratch);
     for (int i = 0; i < kCacheSlots; i++) free(_cache[i].buffer);
     if (_fd >= 0) close(_fd);
+    memset_s(_aesKey, sizeof _aesKey, 0, sizeof _aesKey);
+    memset_s(_hmacKey, sizeof _hmacKey, 0, sizeof _hmacKey);
+}
+
+#pragma mark - Encryption
+
+- (BOOL)unlockWithPasswordHandler:(nullable DMGPasswordHandler)handler error:(NSError **)error {
+    if (_physicalSize < 512) return YES;
+
+    uint8_t h[kEncHeaderSize];
+    if (![self rawPreadFully:h length:sizeof h at:0 error:error]) return NO;
+    if (memcmp(h, "encrcdsa", 8) != 0) return YES;
+
+    uint32_t version = be32(h + 8), ivSize = be32(h + 12), keyBits = be32(h + 24), blockSize = be32(h + 52);
+    uint64_t dataSize = be64(h + 56), dataOffset = be64(h + 64), recordOffset = be64(h + 80);
+
+    if (version != 2 || ivSize != 16 || (keyBits != 128 && keyBits != 256)) {
+        if (error) *error = DMGMakeError(DMGParserErrorUnsupported, @"Unsupported encryption (version %u, iv %u, %u-bit key).", version, ivSize, keyBits);
+        return NO;
+    }
+    if (blockSize == 0) blockSize = 512;
+    if (blockSize < 512 || blockSize > (1u << 20) || blockSize % 16 != 0 ||
+        dataOffset > _physicalSize ||
+        recordOffset < kEncHeaderSize || recordOffset > dataOffset ||
+        dataOffset - recordOffset < kEncRecordFixedSize) {
+        if (error) *error = DMGMakeError(DMGParserErrorInvalidContainer, @"Invalid encryption header.");
+        return NO;
+    }
+    uint64_t available = _physicalSize - dataOffset;
+    if (dataSize < 512 || dataSize > available) {
+        if (error) *error = DMGMakeError(DMGParserErrorInvalidContainer, @"Encrypted data is truncated.");
+        return NO;
+    }
+
+    uint8_t r[kEncRecordFixedSize];
+    if (![self rawPreadFully:r length:sizeof r at:recordOffset error:error]) return NO;
+
+    uint32_t kdfAlg = be32(r), iterations = be32(r + 8), saltLen = be32(r + 12);
+    uint32_t blobIVSize = be32(r + 48), blobKeyBits = be32(r + 84), blobSize = be32(r + 100);
+
+    if (kdfAlg != kEncKDFPBKDF2 || blobKeyBits != 192) {
+        if (error) *error = DMGMakeError(DMGParserErrorUnsupported, @"Unsupported key wrapping (kdf %u, blob key bits %u).", kdfAlg, blobKeyBits);
+        return NO;
+    }
+    if (iterations == 0 || iterations > kEncMaxIterations || saltLen == 0 || saltLen > 32 ||
+        blobIVSize < 8 || blobIVSize > 32 ||
+        blobSize < 8 || blobSize > kEncMaxBlobSize || blobSize % 8 != 0 ||
+        dataOffset - recordOffset - kEncRecordFixedSize < blobSize) {
+        if (error) *error = DMGMakeError(DMGParserErrorInvalidContainer, @"Invalid key record.");
+        return NO;
+    }
+
+    NSMutableData *blob = [NSMutableData dataWithLength:blobSize];
+    if (![self rawPreadFully:blob.mutableBytes length:blobSize at:recordOffset + kEncRecordFixedSize error:error]) return NO;
+
+    NSError *lastError = nil;
+    for (NSUInteger attempt = 0;; attempt++) {
+        if (!handler) {
+            if (error) *error = DMGMakeError(DMGParserErrorPasswordRequired, @"This disk image is encrypted and needs a password.");
+            return NO;
+        }
+        NSString *password = handler(attempt, lastError);
+        if (!password) {
+            if (error) *error = DMGMakeError(DMGParserErrorCancelled, @"Password entry was cancelled.");
+            return NO;
+        }
+
+        BOOL incorrect = NO;
+        if ([self deriveKeysFromPassword:password salt:r + 16 saltLength:saltLen iterations:iterations
+                                  blobIV:r + 52 blob:blob aesKeyLength:keyBits / 8 incorrect:&incorrect error:error]) {
+            break;
+        }
+        if (!incorrect) return NO;
+        lastError = DMGMakeError(DMGParserErrorIncorrectPassword, @"The password is incorrect.");
+    }
+
+    uint64_t padded = ((dataSize + blockSize - 1) / blockSize) * blockSize;
+    _cryptBlockSize = blockSize;
+    _cryptDataOffset = dataOffset;
+    _cryptCipherLength = MIN(available, padded);
+    _fileSize = dataSize;
+    _encrypted = YES;
+    return YES;
+}
+
+- (BOOL)deriveKeysFromPassword:(NSString *)password
+                          salt:(const uint8_t *)salt
+                    saltLength:(size_t)saltLen
+                    iterations:(uint32_t)iterations
+                        blobIV:(const uint8_t *)iv
+                          blob:(NSData *)blob
+                  aesKeyLength:(size_t)aesLen
+                     incorrect:(BOOL *)incorrect
+                         error:(NSError **)error {
+    *incorrect = NO;
+
+    NSData *pw = [password dataUsingEncoding:NSUTF8StringEncoding] ?: [NSData data];
+    const char *pwBytes = pw.length ? pw.bytes : "";
+
+    uint8_t kek[kCCKeySize3DES];
+    if (CCKeyDerivationPBKDF(kCCPBKDF2, pwBytes, pw.length, salt, saltLen, kCCPRFHmacAlgSHA1,
+                             iterations, kek, sizeof kek) != kCCSuccess) {
+        if (error) *error = DMGMakeError(DMGParserErrorUnsupported, @"Key derivation failed.");
+        return NO;
+    }
+
+    uint8_t plain[kEncMaxBlobSize + kCCBlockSize3DES];
+    size_t plainLen = 0;
+    CCCryptorStatus st = CCCrypt(kCCDecrypt, kCCAlgorithm3DES, kCCOptionPKCS7Padding, kek, sizeof kek, iv,
+                                 blob.bytes, blob.length, plain, sizeof plain, &plainLen);
+    memset_s(kek, sizeof kek, 0, sizeof kek);
+
+    // A wrong password almost always shows up as bad padding.
+    if (st != kCCSuccess || plainLen < aesLen + kEncHMACKeySize) {
+        memset_s(plain, sizeof plain, 0, sizeof plain);
+        *incorrect = YES;
+        return NO;
+    }
+    memcpy(_aesKey, plain, aesLen);
+    _aesKeyLength = aesLen;
+    memcpy(_hmacKey, plain + aesLen, kEncHMACKeySize);
+    memset_s(plain, sizeof plain, 0, sizeof plain);
+    return YES;
+}
+
+- (BOOL)decryptedPreadFully:(void *)buf length:(size_t)len at:(uint64_t)off error:(NSError **)error {
+    const uint64_t bs = _cryptBlockSize;
+    const uint64_t maxSpanBlocks = MAX((uint64_t)1, kEncSpanBytes / bs);
+    uint8_t *dst = buf;
+    uint8_t *tmp = NULL;
+    size_t tmpCap = 0;
+    size_t done = 0;
+    BOOL ok = YES;
+
+    while (done < len && ok) {
+        uint64_t pos = off + done;
+        uint64_t firstBlock = pos / bs, blockOff = pos % bs;
+        uint64_t needed = (blockOff + (len - done) + bs - 1) / bs;
+        uint64_t blocks = MIN(needed, maxSpanBlocks);
+        uint64_t cipherPos = firstBlock * bs;
+
+        if (cipherPos >= _cryptCipherLength || firstBlock + blocks > (1ull << 32)) {
+            if (error) *error = DMGMakeError(DMGParserErrorIO, @"Read beyond end of encrypted data.");
+            ok = NO;
+            break;
+        }
+        size_t cipherLen = (size_t)MIN(blocks * bs, _cryptCipherLength - cipherPos);
+        if (tmpCap < cipherLen * 2) {
+            free(tmp);
+            tmp = malloc(cipherLen * 2);
+            tmpCap = tmp ? cipherLen * 2 : 0;
+            if (!tmp) {
+                if (error) *error = DMGMakeError(DMGParserErrorIO, @"Out of memory.");
+                ok = NO;
+                break;
+            }
+        }
+        uint8_t *cipher = tmp, *plain = tmp + cipherLen;
+        if (![self rawPreadFully:cipher length:cipherLen at:_cryptDataOffset + cipherPos error:error]) {
+            ok = NO;
+            break;
+        }
+
+        for (size_t b = 0; (uint64_t)b * bs < cipherLen; b++) {
+            size_t start = (size_t)(b * bs);
+            size_t blockLen = (size_t)MIN(bs, (uint64_t)cipherLen - start);
+            if (blockLen % kCCBlockSizeAES128 != 0) {
+                if (error) *error = DMGMakeError(DMGParserErrorInvalidContainer, @"Encrypted data is not block aligned.");
+                ok = NO;
+                break;
+            }
+            uint32_t n = (uint32_t)(firstBlock + b);
+            uint8_t be[4] = { (uint8_t)(n >> 24), (uint8_t)(n >> 16), (uint8_t)(n >> 8), (uint8_t)n };
+            uint8_t mac[CC_SHA1_DIGEST_LENGTH];
+            CCHmac(kCCHmacAlgSHA1, _hmacKey, sizeof _hmacKey, be, sizeof be, mac);
+
+            size_t moved = 0;
+            CCCryptorStatus st = CCCrypt(kCCDecrypt, kCCAlgorithmAES, 0, _aesKey, _aesKeyLength, mac,
+                                         cipher + start, blockLen, plain + start, blockLen, &moved);
+            if (st != kCCSuccess || moved != blockLen) {
+                if (error) *error = DMGMakeError(DMGParserErrorIO, @"Decryption failed.");
+                ok = NO;
+                break;
+            }
+        }
+        if (!ok) break;
+
+        if (blockOff >= cipherLen) {
+            if (error) *error = DMGMakeError(DMGParserErrorIO, @"Read beyond end of encrypted data.");
+            ok = NO;
+            break;
+        }
+        size_t take = (size_t)MIN((uint64_t)(len - done), cipherLen - blockOff);
+        memcpy(dst + done, plain + blockOff, take);
+        done += take;
+    }
+
+    if (tmp) memset_s(tmp, tmpCap, 0, tmpCap);
+    free(tmp);
+    return ok;
 }
 
 #pragma mark - Parser
@@ -292,6 +524,7 @@ static NSDictionary<NSNumber *, NSData *> *resourcesByID(id list) {
 #pragma mark - Reading
 
 @synthesize virtualSize = _virtualSize;
+@synthesize encrypted = _encrypted;
 
 - (NSUInteger)chunkIndexForSector:(uint64_t)sector {
     NSInteger low = 0, high = (NSInteger)_chunkCount - 1, best = -1;
@@ -422,7 +655,16 @@ static NSDictionary<NSNumber *, NSData *> *resourcesByID(id list) {
 }
 
 - (BOOL)preadFully:(void *)buf length:(size_t)len at:(uint64_t)off error:(NSError **)error {
+    if (!_encrypted) return [self rawPreadFully:buf length:len at:off error:error];
     if (off > _fileSize || len > _fileSize - off) {
+        if (error) *error = DMGMakeError(DMGParserErrorIO, @"Read beyond end of file (file truncated?).");
+        return NO;
+    }
+    return [self decryptedPreadFully:buf length:len at:off error:error];
+}
+
+- (BOOL)rawPreadFully:(void *)buf length:(size_t)len at:(uint64_t)off error:(NSError **)error {
+    if (off > _physicalSize || len > _physicalSize - off) {
         if (error) *error = DMGMakeError(DMGParserErrorIO, @"Read beyond end of file (file truncated?).");
         return NO;
     }
