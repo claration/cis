@@ -57,9 +57,6 @@ $ brew install create-dmg
 
 The output of the app will be in `_build/Applications/*.app` | `_build/*.dmg`
 
-> [!IMPORTANT]
-> When debugging, CIS is going to try and by default open to a hardcoded path on my computer (sorry!). This is for testing purposes and having convenient access to a debugger.
-
 ## Sponsors
 
 | Thanks to all my [sponsors](https://github.com/sponsors/claration)!! |
