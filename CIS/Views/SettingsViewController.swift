@@ -13,9 +13,10 @@ internal final class SettingsViewController: NSViewController {
     // MARK: Views
 
     private let locationLabel = NSTextField(labelWithString: .l(.settingsDefaultLocation))
+
     private lazy var applicationsOption: LocationOptionButton = {
         let icon = NSWorkspace.shared.icon(forFile: "/")
-        let button = LocationOptionButton(icon: icon, title: "Everyone")
+        let button = LocationOptionButton(icon: icon, title: .l(.settingsDefaultLocationEveryone))
         button.onSelect = { [weak self] in
             Preferences.defaultInstallLocation = .everyone
             self?.updateLocationSelection()
@@ -25,7 +26,7 @@ internal final class SettingsViewController: NSViewController {
 
     private lazy var userApplicationsOption: LocationOptionButton = {
         let icon = NSWorkspace.shared.icon(forFile: "/Users")
-        let button = LocationOptionButton(icon: icon, title: "Myself")
+        let button = LocationOptionButton(icon: icon, title: .l(.settingsDefaultLocationMyself))
         button.onSelect = { [weak self] in
             Preferences.defaultInstallLocation = .myself
             self?.updateLocationSelection()
@@ -73,10 +74,20 @@ internal final class SettingsViewController: NSViewController {
         return button
     }()
 
-    private lazy var setDefaultButton = NSButton(
+    private let setDefaultDescription: NSTextField = {
+        let baseFont = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+        let italicDescriptor = baseFont.fontDescriptor.withSymbolicTraits(.italic)
+        let font = NSFont(descriptor: italicDescriptor, size: baseFont.pointSize) ?? baseFont
+
+        let label = NSTextField(wrappingLabelWithString: .l(.settingsSetDefaultDescription(appName: "Disk Image Mounter")))
+        label.font = font
+        return label
+    }()
+
+    private lazy var defaultButton = NSButton(
         title: .l(.settingsSetDefault),
         target: self,
-        action: #selector(setDefault)
+        action: #selector(setDefaultApplication)
     )
 
     private lazy var installLocationStack: NSStackView = {
@@ -95,7 +106,8 @@ internal final class SettingsViewController: NSViewController {
             skipPriorStepsCheckbox,
             skipFinishedStepCheckbox,
             deleteCheckbox,
-            setDefaultButton
+            defaultButton,
+            setDefaultDescription
         ])
         stack.orientation = .vertical
         stack.alignment = .leading
@@ -153,7 +165,7 @@ extension SettingsViewController {
         Preferences.automaticallyTrashDmg = (sender.state == .on)
     }
 
-    @objc private func setDefault() {
+    @objc private func setDefaultApplication() {
         NSWorkspace.setDefaultFileForApplication(
             url: Bundle.main.bundleURL,
             toOpen: UTType(filenameExtension: "dmg")!

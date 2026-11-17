@@ -417,6 +417,28 @@
         }
       }
     },
+    "settingsDefaultLocationEveryone" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Everyone"
+          }
+        }
+      }
+    },
+    "settingsDefaultLocationMyself" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mysef"
+          }
+        }
+      }
+    },
     "settingsDeleteDiskAfterFinished" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -435,6 +457,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Set Default"
+          }
+        }
+      }
+    },
+    "settingsSetDefaultDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Setting default will make this application the default application for opening DMG files, if the DMG file is invalid it will prompt you to open it in %1$(appName)@ instead."
           }
         }
       }

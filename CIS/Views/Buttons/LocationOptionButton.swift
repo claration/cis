@@ -30,7 +30,7 @@ internal final class LocationOptionButton: NSBox {
         return label
     }()
 
-    // MARK: Init
+    // MARK: Setup
 
     internal init(icon: NSImage?, title: String) {
         super.init(frame: .zero)
@@ -44,8 +44,6 @@ internal final class LocationOptionButton: NSBox {
     internal required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    // MARK: Setup
 
     private func setupBox() {
         boxType = .custom
