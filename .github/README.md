@@ -1,37 +1,38 @@
-## CIS
+# Claration Install System
 
 [![GitHub License](https://img.shields.io/github/license/claration/cis?color=%23C96FAD)](https://github.com/claration/cis/blob/main/LICENSE)
 [![Sponsor Me](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/claration)
 
-CIS, named "Claration Install System", allows you to open `.dmg` files into an installer-like interface which directly extracts apps into `/Applications` (or a path of your choosing) without the need of the pain of dragging and dropping or waiting for it to (un)mount.
+CIS allows you to open DMG files into an installer-like interface which directly extracts apps into applications without the need of the pain of dragging and dropping or waiting it to mount.
 
-<img src="demo.png" alt="Demo of Discord Setup" align="left" width="400" />
-
-If you're someone coming from Windows and now using macOS, you will recognize that this [looks like NSIS](https://nsis.sourceforge.io/Main_Page)!
-
-After installing CIS, you will see that by default it won't open `.dmg` as Disk Image Mounter takes ownership. You can mitigate this by opening CIS, then CIS will do its thing and use `NSWorkspace` to gain ownership, once thats done, will show an alert saying that it's successful. You can also optionally change it manually within another app that manages which apps own which UTI's.
-
-<br clear="left" />
-
-<img src="demo2.png" alt="Demo of Discord Setup in the Location Window" align="right" width="400" />
-
-Once that is all complete, you should be able to double click a `.dmg` file and it'll show the installer interface! You will have options on where the installer installs the apps to, along with having an option to open the app automatically after installing.
-
-<img src="demo3.png" alt="Demo of Discord Setup in the Location Window" width="300" />
-
-<br clear="right" />
-
-<img src="demo4.png" alt="Demo of Discord Setup in the Install Window" align="left" width="400" />
+<img src="demo.png" alt="Demo of Discord Setup" />
 
 Here's an example of CIS installing [Discord](https://discord.com/)'s distributed `.dmg` file. It should work with most of these files, it just depends on how distributes made them.
 
-[SF Symbols](https://developer.apple.com/sf-symbols/) is not supported due to their `.dmg` housing a `.pkg` file instead of the required `.app` that CIS needs.
+## Design Philosophy
 
+### DMG files
 
+If you're someone coming from Windows and now using macOS, you will recognize that this [looks like NSIS](https://nsis.sourceforge.io/Main_Page)! This was intentional as it serves a good baseline for installer interfaces people recognize, however you can customize how the installer works to your liking!
 
-CIS should also support parsing `.dmg`'s with HFS+ and APFS volumes! Raw disk images will mostly vary in support, and most of the time they don't even have applications anyway, so CIS will notify you if there's nothing that's important that it's able to install.
+- Supports skipping some installer steps to be be less-like the Windows experience.
+- Supports some default options for destination folders & trashing the DMG file afterwards.
 
-<br clear="left" />
+DMG files are not mounted! They are read and processed in memory, while trying to preserve near-native speeds when extracting files.
+
+CIS will extract any `.app` directories embedded in DMG files into a destination directory, however you can customize it in the App Picker section in the installer. Though, setting the option to skip all the needless steps like this one will hinder that ability.
+
+### PKG files inside of DMG files
+
+DMG files which house PKG files (e.g. [SF Symbols](https://developer.apple.com/sf-symbols/)) are also supported! CIS will extract any available PKG files and open them into the macOS package installer.
+
+<img src="demo2.png" alt="Demo of SF Symbols" />
+
+CIS will first check for any available `.app` directories, if it can't find anything it will then search and extract any available `.pkg` files into a temporary directory, then execute the built-in macOS installer for these files.
+
+## Download
+
+Visit [releases](https://github.com/claration/cis/releases) and get the latest version for your computer.
 
 ## Building
 
@@ -58,10 +59,6 @@ The output of the app will be in `_build/Applications/*.app` | `_build/*.dmg`
 
 > [!IMPORTANT]
 > When debugging, CIS is going to try and by default open to a hardcoded path on my computer (sorry!). This is for testing purposes and having convenient access to a debugger.
-
-## Download
-
-Visit [releases](https://github.com/claration/cis/releases) and get the latest version for your computer.
 
 ## Sponsors
 
