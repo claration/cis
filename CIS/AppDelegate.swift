@@ -9,10 +9,11 @@ internal import AppKit
 
 internal final class AppDelegate: NSObject, NSApplicationDelegate {
     private var activeWindows: Set<NSWindow> = []
+    private var hasOpenedDmg: Bool = false
 
     internal func applicationDidFinishLaunching(_ aNotification: Notification) {
         setupMainMenu()
-        if activeWindows.isEmpty {
+        if !hasOpenedDmg {
             let window = CISWindow(toolbarStyle: .unifiedCompact)
             window.title = .l(.settingsTitle)
             window.contentViewController = SettingsViewController()
@@ -28,6 +29,7 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
 
         if url.pathExtension.lowercased() == "dmg" {
             openInstallerWindow(with: url)
+            hasOpenedDmg = true
             return true
         } else {
             return false
@@ -39,6 +41,7 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
             let url = URL(fileURLWithPath: filename)
             if url.pathExtension.lowercased() == "dmg" {
                 openInstallerWindow(with: url)
+                hasOpenedDmg = true
             }
         }
     }
