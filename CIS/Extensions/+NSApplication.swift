@@ -9,7 +9,7 @@ internal import AppKit
 
 extension NSApplication {
 
-    ///
+    /// Generates a new icon using our current icon with a custom "badge" on the bottom right.
     internal func genApplicationIconBadgeImage(with subIcon: NSImage) -> NSImage {
         let baseImage = NSApp.applicationIconImage!
 
@@ -45,9 +45,4 @@ extension NSApplication {
         combinedImage.unlockFocus()
         return combinedImage
     }
-
-    /// Sets mini icon image on the bottom right at runtime.
-//    internal func setApplicationIconBadgeImage(with subIcon: NSImage) {
-//        self.applicationIconImage = genApplicationIconBadgeImage(with: subIcon)
-//    }
 }

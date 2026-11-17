@@ -1,58 +1,44 @@
 //
 //  AppDelegate.swift
-//  stupiddiskimageinstaller
+//  CIS
 //
 //  Created by samsam on 11/11/26.
 //
 
 internal import AppKit
-internal import struct UniformTypeIdentifiers.UTType
 
 internal final class AppDelegate: NSObject, NSApplicationDelegate {
-    internal var window: NSWindow?
-    internal var launchedWithDMG = false
+    private var activeWindows: Set<NSWindow> = []
 
     internal func applicationDidFinishLaunching(_ aNotification: Notification) {
         setupMainMenu()
-
-        #if DEBUG
-        let debugDMGPath = URL(fileURLWithPath: "/Users/petals/Documents/stupiddiskimageinstaller/Examples/Discord.dmg")
-        if FileManager.default.fileExists(atPath: debugDMGPath.relativePath) {
-            launchedWithDMG = true
-            openInstallerWindow(with: debugDMGPath)
-            return
+        if activeWindows.isEmpty {
+            let window = CISWindow(toolbarStyle: .unifiedCompact)
+            window.title = .l(.settingsTitle)
+            window.contentViewController = SettingsViewController()
+            window.center()
+            window.makeKeyAndOrderFront(nil)
+            track(window)
+            NSApp.activate(ignoringOtherApps: true)
         }
-        #else
-        // Ideally, the app should only be opened when a user double pressed
-        // on a DMG file, otherwise we should force our app to be default.
-        if !launchedWithDMG {
-            NSWorkspace.setDefaultFileForApplication(
-                url: Bundle.main.bundleURL,
-                toOpen: UTType(filenameExtension: "dmg")!
-            )
-        }
-        #endif
     }
 
     internal func application(_ sender: NSApplication, openFile filename: String) -> Bool {
-        let filename = URL(fileURLWithPath: filename)
+        let url = URL(fileURLWithPath: filename)
 
-        if filename.pathExtension.lowercased() == "dmg" {
-            launchedWithDMG = true
-            openInstallerWindow(with: filename)
+        if url.pathExtension.lowercased() == "dmg" {
+            openInstallerWindow(with: url)
             return true
+        } else {
+            return false
         }
-        return false
     }
 
     internal func application(_ sender: NSApplication, openFiles filenames: [String]) {
         for filename in filenames {
-            let filename = URL(fileURLWithPath: filename)
-
-            if filename.pathExtension.lowercased() == "dmg" {
-                launchedWithDMG = true
-                openInstallerWindow(with: filename)
-                break
+            let url = URL(fileURLWithPath: filename)
+            if url.pathExtension.lowercased() == "dmg" {
+                openInstallerWindow(with: url)
             }
         }
     }
@@ -62,47 +48,26 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func openInstallerWindow(with dmgPath: URL) {
-//        if let window {
-//            NSAlert.showAlert(
-//                title: "Failed to Open DMG File",
-//                message: .l(.duplicateWindow),
-//                style: .warning
-//            )
-//            window.makeKeyAndOrderFront(nil)
-//            return
-//        }
-
         do {
             let dmg = try DMG(for: dmgPath)
-
-            let window = NSWindow(
-                contentRect: dmg.isPkg ? Self.miniFrame : Self.frame,
-                styleMask: [.titled, .closable, .miniaturizable],
-                backing: .buffered,
-                defer: false
-            )
-
-            window.representedURL = dmgPath
+            let window = CISWindow()
 
             if dmg.isPkg {
-                window.contentViewController = PKGInstallerViewController(dmg: dmg)
+                window.contentViewController = ExtractorViewController(dmg: dmg)
                 window.titlebarAppearsTransparent = true
             } else {
                 window.contentViewController = InstallerViewController(dmg: dmg)
                 window.title = .l(.setup(appName: dmg.name))
-                window.appearance = NSAppearance(named: .aqua)
+                window.representedURL = dmgPath
+                if !Preferences.useSystemAppearence {
+                    window.appearance = NSAppearance(named: .aqua)
+                }
             }
 
             window.center()
             window.makeKeyAndOrderFront(nil)
-
+            track(window)
             NSApp.activate(ignoringOtherApps: true)
-
-//            if let icon = dmg.icon {
-//                NSApplication.shared.setApplicationIconBadgeImage(with: icon)
-//            }
-
-            self.window = window
         } catch {
             NSAlert.showAlert(
                 title: "Failed to Open DMG File",
@@ -148,10 +113,17 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func showAbout(_ sender: Any?) {
         NSApp.orderFrontStandardAboutPanel()
     }
-}
 
-extension AppDelegate {
-    /// Convenience constant for getting the intended window size/frame.
-    static internal let frame = NSRect(x: 0, y: 0, width: 500, height: 360)
-    static internal let miniFrame = NSRect(x: 0, y: 0, width: 400, height: 45)
+    private func track(_ window: NSWindow) {
+        activeWindows.insert(window)
+
+        NotificationCenter.default.addObserver(
+            forName: NSWindow.willCloseNotification,
+            object: window,
+            queue: .main
+        ) { [weak self] notification in
+            guard let closingWindow = notification.object as? NSWindow else { return }
+            self?.activeWindows.remove(closingWindow)
+        }
+    }
 }

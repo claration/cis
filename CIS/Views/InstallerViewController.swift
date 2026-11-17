@@ -12,7 +12,6 @@ internal final class InstallerViewController: NSViewController {
 
     private var currentStepIndex = 0
     private var launchAppsWhenFinished = false
-    private var deleteDmgWhenFinished = true
 
     private enum InstallerStep {
         case welcome
@@ -24,13 +23,22 @@ internal final class InstallerViewController: NSViewController {
     }
 
     private lazy var steps: [InstallerStep] = {
-        var list: [InstallerStep] = [.welcome]
+        var list: [InstallerStep] = []
 
-        if (dmg.license != nil) {
-            list.append(.license)
+        if !Preferences.skipPriorInstallerSteps {
+            list.append(.welcome)
+            if (dmg.license != nil) {
+                list.append(.license)
+            }
+            list.append(.apps)
         }
 
-        list.append(contentsOf: [.apps, .location, .installing, .finished])
+        list.append(contentsOf: [.location, .installing])
+
+        if !Preferences.skipFinishedInstallerStep {
+            list.append(.finished)
+        }
+
         return list
     }()
 
@@ -99,7 +107,7 @@ internal final class InstallerViewController: NSViewController {
     }
 
     internal override func loadView() {
-        self.view = NSView(frame: AppDelegate.frame)
+        self.view = NSView(frame: NSRect(x: 0, y: 0, width: 500, height: 360))
     }
 
     internal override func viewDidLoad() {
@@ -180,6 +188,7 @@ internal final class InstallerViewController: NSViewController {
         case .installing:
             let installVC = InstallingStepViewController(dmg: dmg)
             installVC.onCompletion = {
+                NSApp.requestUserAttention(.informationalRequest)
                 self.nextButton.isEnabled = true
             }
             installVC.startInstallation()
@@ -187,14 +196,18 @@ internal final class InstallerViewController: NSViewController {
             backButton.isEnabled = false
             nextButton.isEnabled = false
             cancelButton.isEnabled = false
-            nextButton.title = .l(.next)
+            if Preferences.skipFinishedInstallerStep {
+                nextButton.title = .l(.finish)
+            } else {
+                nextButton.title = .l(.next)
+            }
         case .finished:
             let finishedVC = FinishedStepViewController(dmg: dmg)
             finishedVC.runOptionChecked = {
                 self.launchAppsWhenFinished = $0
             }
             finishedVC.deleteOptionChecked = {
-                self.deleteDmgWhenFinished = $0
+                self.dmg.deleteDmgWhenFinished = $0
             }
             newVC = finishedVC
             backButton.isEnabled = false
@@ -220,7 +233,7 @@ internal final class InstallerViewController: NSViewController {
     }
 
     @objc private func cancelClicked() {
-        NSApp.terminate(nil)
+        view.window?.close()
     }
 
     @objc private func backClicked() {
@@ -238,7 +251,7 @@ internal final class InstallerViewController: NSViewController {
                 }
             }
 
-            if deleteDmgWhenFinished {
+            if dmg.deleteDmgWhenFinished {
                 do {
                     try FileManager.default.trashItem(at: dmg.filePath, resultingItemURL: nil)
                     // funny sound
@@ -257,7 +270,7 @@ internal final class InstallerViewController: NSViewController {
                 }
             }
 
-            NSApp.terminate(nil)
+            view.window?.close()
             return
         }
 

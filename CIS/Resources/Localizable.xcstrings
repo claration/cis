@@ -406,6 +406,83 @@
         }
       }
     },
+    "settingsDefaultLocation" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default Installation Location:"
+          }
+        }
+      }
+    },
+    "settingsDeleteDiskAfterFinished" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete disk image after installation"
+          }
+        }
+      }
+    },
+    "settingsSetDefault" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set Default"
+          }
+        }
+      }
+    },
+    "settingsSkipFinishedStep" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip finished installer step"
+          }
+        }
+      }
+    },
+    "settingsSkipPriorSteps" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip prior installer steps"
+          }
+        }
+      }
+    },
+    "settingsSystemAppearance" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use system appearance"
+          }
+        }
+      }
+    },
+    "settingsTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
     "setup" : {
       "comment" : "Twitter Setup",
       "extractionState" : "manual",

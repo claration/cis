@@ -10,7 +10,6 @@ internal import AppKit
 internal final class InstallerHeaderView: NSView {
 
     // MARK: Views
-
     // sexy
     private let gradientLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
@@ -58,33 +57,49 @@ internal final class InstallerHeaderView: NSView {
         return stack
     }()
 
+    private let storedDmgColor: NSColor
+    private let storedDmgIcon: NSImage?
+
     // MARK: Setup
 
-    init(dmg: DMG) {
+    internal init(dmg: DMG) {
+        self.storedDmgColor = dmg.color
+        self.storedDmgIcon = dmg.icon ?? NSApp.applicationIconImage
         super.init(frame: .zero)
 
-        gradientLayer.colors = [
-            dmg.color.cgColor,
-            NSColor.white.cgColor
-        ]
-        iconImageView.image = dmg.icon ?? NSApp.applicationIconImage
-
+        iconImageView.image = storedDmgIcon
         setupView()
+        updateColors()
     }
 
-    required init?(coder: NSCoder) {
+    internal required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func layout() {
+    internal override var wantsUpdateLayer: Bool {
+        true
+    }
+
+    internal override func updateLayer() {
+        super.updateLayer()
+        updateColors()
+    }
+
+    internal override func layout() {
         super.layout()
         gradientLayer.frame = gradientBackgroundView.bounds
     }
 
+    private func updateColors() {
+        self.layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
+        gradientLayer.colors = [
+            storedDmgColor.cgColor,
+            NSColor.windowBackgroundColor.cgColor
+        ]
+    }
+
     private func setupView() {
         self.wantsLayer = true
-        self.layer?.backgroundColor = NSColor.white.cgColor
-
         gradientBackgroundView.layer?.addSublayer(gradientLayer)
 
         [gradientBackgroundView, iconImageView, textStackView].forEach {

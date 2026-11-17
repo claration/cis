@@ -7,6 +7,16 @@
 
 internal import AppKit
 
+fileprivate final class SettingsBackgroundView: NSView {
+    fileprivate override var wantsUpdateLayer: Bool {
+        true
+    }
+
+    fileprivate override func updateLayer() {
+        layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
+    }
+}
+
 internal class WizardStepViewController: NSViewController {
 
     // MARK: Views
@@ -60,9 +70,9 @@ internal class WizardStepViewController: NSViewController {
     }
 
     internal override func loadView() {
-        self.view = NSView()
-        self.view.wantsLayer = true
-        self.view.layer?.backgroundColor = NSColor.white.cgColor
+        let view = SettingsBackgroundView()
+        view.wantsLayer = true
+        self.view = view
 
         [sidebarBackgroundView, splashImageView, iconImageView, titleLabel, descriptionLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false

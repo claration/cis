@@ -25,7 +25,10 @@ internal final class DMG {
     internal var license: DMGLicense? = nil
 
     internal var nodesToInstall: [DMGNode] = []
-    internal var destinationPath = URL(filePath: "/Applications")
+    internal var destinationPath: URL = Preferences.defaultInstallLocation == .everyone
+        ? .applicationDirectory
+        : .homeDirectory.appending(path: "Applications")
+    internal var deleteDmgWhenFinished = Preferences.automaticallyTrashDmg
 
     internal let isPkg: Bool
 

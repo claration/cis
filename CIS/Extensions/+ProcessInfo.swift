@@ -23,6 +23,17 @@ extension ProcessInfo {
 
     /// The operating systems marketing model using `libMobileGestalt`.
     internal var marketingModel: String {
-        MGCopyAnswer(kMGPhysicalHardwareNameString)?.takeUnretainedValue() as? String ?? "Unknown"
+        guard
+            let raw = MGCopyAnswer(kMGPhysicalHardwareNameString)?.takeUnretainedValue() as? String
+        else {
+            return "Unknown"
+        }
+
+        // Mac Mini (2022) -> Mac Mini
+        if let parenIndex = raw.firstIndex(of: "(") {
+            return String(raw[..<parenIndex]).trimmingCharacters(in: .whitespaces)
+        }
+
+        return raw
     }
 }

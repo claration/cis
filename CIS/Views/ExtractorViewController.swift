@@ -7,7 +7,7 @@
 
 internal import AppKit
 
-internal final class PKGInstallerViewController: NSViewController {
+internal final class ExtractorViewController: NSViewController {
     internal var dmg: DMG
 
     // MARK: Views
@@ -68,7 +68,7 @@ internal final class PKGInstallerViewController: NSViewController {
     }
 
     internal override func loadView() {
-        self.view = NSView(frame: AppDelegate.miniFrame)
+        self.view = NSView(frame: NSRect(x: 0, y: 0, width: 400, height: 45))
     }
 
     internal override func viewDidLoad() {
@@ -107,7 +107,7 @@ internal final class PKGInstallerViewController: NSViewController {
         Task {
             do {
                 try await dmg.openNodes()
-                NSApp.terminate(nil)
+                view.window?.close()
             } catch {
                 NSAlert.showAlert(
                     title: "Failed to Extract Package",

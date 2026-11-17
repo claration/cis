@@ -51,12 +51,6 @@ extension NSWorkspace {
                 // forces launch services to recheck us
                 LSRegisterURL(appURL, true)
             }
-
-            NSAlert.showAlert(
-                title: "Successfully Set Default Application",
-                message: "You can now use \(Bundle.main.name) to install applications instead of Disk Image Mounter.",
-                style: .informational
-            )
         }
     }
 }
