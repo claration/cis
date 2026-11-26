@@ -1,568 +1,579 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "about" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "About %1$(appName)@"
+  "sourceLanguage": "en",
+  "strings": {
+    "about": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About %1$(appName)@"
           }
         }
       }
     },
-    "back" : {
-      "comment" : "“Back” button",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "< Back"
+    "back": {
+      "comment": "“Back” button",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "< Back"
           }
         }
       }
     },
-    "cancel" : {
-      "comment" : "“Cancel” button",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
+    "cancel": {
+      "comment": "“Cancel” button",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
           }
         }
       }
     },
-    "duplicateWindow" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Make sure an existing installer window is closed!"
+    "duplicateWindow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Make sure an existing installer window is closed!"
           }
         }
       }
     },
-    "finish" : {
-      "comment" : "“Finish” button",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Finish"
+    "finish": {
+      "comment": "“Finish” button",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finish"
           }
         }
       }
     },
-    "finishedDeleteDiskImage" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Move ‘%1$(pathName)@’ to trash"
+    "finishedDeleteDiskImage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move ‘%1$(pathName)@’ to trash"
           }
         }
       }
     },
-    "finishedDescription" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$(appName)@ has been installed on your %2$(model)@.\n\nClick Finish to close Setup."
+    "finishedDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$(appName)@ has been installed on your %2$(model)@.\n\nClick Finish to close Setup."
           }
         }
       }
     },
-    "finishedOptionRun" : {
-      "comment" : "Run Twitter",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Run %1$(appName)@"
+    "finishedOptionRun": {
+      "comment": "Run Twitter",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run %1$(appName)@"
           }
         }
       }
     },
-    "finishedTitle" : {
-      "comment" : "Completing Twitter Setup",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completing %1$(appName)@ Setup"
+    "finishedTitle": {
+      "comment": "Completing Twitter Setup",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Completing %1$(appName)@ Setup"
           }
         }
       }
     },
-    "iAgree" : {
-      "comment" : "“I Agree” button",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I Agree"
+    "iAgree": {
+      "comment": "“I Agree” button",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I Agree"
           }
         }
       }
     },
-    "install" : {
-      "comment" : "“Install” button",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Install"
+    "install": {
+      "comment": "“Install” button",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Install"
           }
         }
       }
     },
-    "installingDescription" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Please wait while %1$(appName)@ is being installed."
+    "installingDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please wait while %1$(appName)@ is being installed."
           }
         }
       }
     },
-    "installingIdle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Idle"
+    "installingIdle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Idle"
           }
         }
       }
     },
-    "installingSuccessful" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Installation completed successfully."
+    "installingSuccessful": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installation completed successfully."
           }
         }
       }
     },
-    "installingTitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Installing"
+    "installingTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installing"
           }
         }
       }
     },
-    "licenseAcceptRead" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Press Page Down to see the rest of the agreement."
+    "licenseAcceptRead": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Press Page Down to see the rest of the agreement."
           }
         }
       }
     },
-    "licenseAcceptRequired" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "If you accept the terms of the agreement, click I Agree to continue. You must accept the agreement to install %1$(appName)@."
+    "licenseAcceptRequired": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If you accept the terms of the agreement, click I Agree to continue. You must accept the agreement to install %1$(appName)@."
           }
         }
       }
     },
-    "licenseDescription" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Please review the license terms before installing %1$(appName)@."
+    "licenseDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please review the license terms before installing %1$(appName)@."
           }
         }
       }
     },
-    "licenseTitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "License Agreement"
+    "licenseTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "License Agreement"
           }
         }
       }
     },
-    "locationBrowseButton" : {
-      "comment" : "“Browse...” button",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Browse..."
+    "locationBrowseButton": {
+      "comment": "“Browse...” button",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Browse..."
           }
         }
       }
     },
-    "locationBrowseTitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Destination Folder"
+    "locationBrowseTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Destination Folder"
           }
         }
       }
     },
-    "locationDescription" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose the folder in which to install %1$(appName)@."
+    "locationDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose the folder in which to install %1$(appName)@."
           }
         }
       }
     },
-    "locationPromptDescription" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose the destination folder for installation."
+    "locationPromptDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose the destination folder for installation."
           }
         }
       }
     },
-    "locationPromptTitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Select"
+    "locationPromptTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select"
           }
         }
       }
     },
-    "locationSpaceAvailable" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Space Available: %1$(formattedBytes)@"
+    "locationSpaceAvailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Space Available: %1$(formattedBytes)@"
           }
         }
       }
     },
-    "locationSpaceRequired" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Space Required: %1$(formattedBytes)@"
+    "locationSpaceRequired": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Space Required: %1$(formattedBytes)@"
           }
         }
       }
     },
-    "locationTitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose Install Location"
+    "locationTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose Install Location"
           }
         }
       }
     },
-    "next" : {
-      "comment" : "“Next >” button",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Next >"
+    "next": {
+      "comment": "“Next >” button",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next >"
           }
         }
       }
     },
-    "noThanks" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No Thanks"
+    "noThanks": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Thanks"
           }
         }
       }
     },
-    "open" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open %1$(appName)@"
+    "open": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open %1$(appName)@"
           }
         }
       }
     },
-    "openInstead" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Would you like to open this file in %1$(appName)@ instead?"
+    "openInstead": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Would you like to open this file in %1$(appName)@ instead?"
           }
         }
       }
     },
-    "pickerChoose" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Select the applications you would like to install to your %1$(model)@."
+    "pickerChoose": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select the applications you would like to install to your %1$(model)@."
           }
         }
       }
     },
-    "pickerDescription" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Please pick the applications that you would like to install."
+    "pickerDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please pick the applications that you would like to install."
           }
         }
       }
     },
-    "pickerTitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pick Applications"
+    "pickerTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pick Applications"
           }
         }
       }
     },
-    "pkgInstallingTitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Extracting “%1$(fileName)@”"
+    "pkgInstallingTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Extracting “%1$(fileName)@”"
           }
         }
       }
     },
-    "quit" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quit %1$(appName)@"
+    "quit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quit %1$(appName)@"
           }
         }
       }
     },
-    "settingsDefaultLocation" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Default Installation Location:"
+    "settingsAutoMountDmgWithoutApps": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open disk images without apps in Disk Image Mounter"
           }
         }
       }
     },
-    "settingsDefaultLocationEveryone" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Everyone"
+    "settingsDefaultLocation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default Installation Location:"
           }
         }
       }
     },
-    "settingsDefaultLocationMyself" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Myself"
+    "settingsDefaultLocationEveryone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Everyone"
           }
         }
       }
     },
-    "settingsDeleteDiskAfterFinished" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete disk image after installation"
+    "settingsDefaultLocationMyself": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Myself"
           }
         }
       }
     },
-    "settingsSetDefault" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Set Default"
+    "settingsDeleteDiskAfterFinished": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete disk image after installation"
           }
         }
       }
     },
-    "settingsSetDefaultDescription" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Setting default will make this application the default application for opening DMG files, if the DMG file is invalid it will prompt you to open it in %1$(appName)@ instead."
+    "settingsSetDefault": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set Default"
           }
         }
       }
     },
-    "settingsSkipFinishedStep" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skip finished installer step"
+    "settingsSetDefaultDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setting default will make this application the default application for opening DMG files, if the DMG file is invalid it will prompt you to open it in %1$(appName)@ instead."
           }
         }
       }
     },
-    "settingsSkipPriorSteps" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skip prior installer steps"
+    "settingsSkipFinishedStep": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip finished installer step"
           }
         }
       }
     },
-    "settingsSystemAppearance" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Use system appearance"
+    "settingsSkipPriorSteps": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip prior installer steps"
           }
         }
       }
     },
-    "settingsTitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Settings"
+    "settingsSystemAppearance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use system appearance"
           }
         }
       }
     },
-    "setup" : {
-      "comment" : "Twitter Setup",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$(appName)@ Setup"
+    "settingsTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
           }
         }
       }
     },
-    "showDetails" : {
-      "comment" : "“Show Details” button",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Show Details"
+    "setup": {
+      "comment": "Twitter Setup",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$(appName)@ Setup"
           }
         }
       }
     },
-    "welcomeDescription" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Setup will guide you through the installation process of %1$(appName)@.\n\nIt is recommended you close all other applications before starting Setup. This will make it possible to update relevant system files without having to reboot your %2$(model)@.\n\nClick Next to continue."
+    "showDetails": {
+      "comment": "“Show Details” button",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show Details"
           }
         }
       }
     },
-    "welcomeTitle" : {
-      "comment" : "Welcome to Twitter Setup",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Welcome to %1$(appName)@ Setup"
+    "welcomeDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setup will guide you through the installation process of %1$(appName)@.\n\nIt is recommended you close all other applications before starting Setup. This will make it possible to update relevant system files without having to reboot your %2$(model)@.\n\nClick Next to continue."
+          }
+        }
+      }
+    },
+    "welcomeTitle": {
+      "comment": "Welcome to Twitter Setup",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome to %1$(appName)@ Setup"
           }
         }
       }
     }
   },
-  "version" : "1.1"
+  "version": "1.1"
 }
