@@ -74,6 +74,16 @@ internal final class SettingsViewController: NSViewController {
         return button
     }()
 
+    private lazy var autoMountCheckbox: NSButton = {
+        let button = NSButton(
+            checkboxWithTitle: .l(.settingsAutoMountDmgWithoutApps),
+            target: self,
+            action: #selector(setAutoMountDmgWithoutApps(_:))
+        )
+        button.state = Preferences.autoMountDmgWithoutApps ? .on : .off
+        return button
+    }()
+
     private let setDefaultDescription: NSTextField = {
         let baseFont = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
         let italicDescriptor = baseFont.fontDescriptor.withSymbolicTraits(.italic)
@@ -106,6 +116,7 @@ internal final class SettingsViewController: NSViewController {
             skipPriorStepsCheckbox,
             skipFinishedStepCheckbox,
             deleteCheckbox,
+            autoMountCheckbox,
             defaultButton,
             setDefaultDescription
         ])
@@ -119,7 +130,7 @@ internal final class SettingsViewController: NSViewController {
     // MARK: Setup
 
     internal override func loadView() {
-        self.view = NSView(frame: NSRect(x: 0, y: 0, width: 340, height: 230))
+        self.view = NSView(frame: NSRect(x: 0, y: 0, width: 340, height: 266))
     }
 
     internal override func viewDidLoad() {
@@ -163,6 +174,10 @@ extension SettingsViewController {
 
     @objc private func setAutomaticallyTrashDmg(_ sender: NSButton) {
         Preferences.automaticallyTrashDmg = (sender.state == .on)
+    }
+
+    @objc private func setAutoMountDmgWithoutApps(_ sender: NSButton) {
+        Preferences.autoMountDmgWithoutApps = (sender.state == .on)
     }
 
     @objc private func setDefaultApplication() {

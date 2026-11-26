@@ -40,4 +40,8 @@ internal enum Preferences {
     /// If the installer should automatically open the extracted DMG contents afterwards.
     @Storage(key: "on.clarati.cis.automaticallyOpenApp", defaultValue: true)
     public static var automaticallyOpenApp: Bool
+
+    /// If the installer should automatically fall back to Disk Image Mounter when no applications are in the DMG.
+    @Storage(key: "on.clarati.cis.autoMountEmptyDmg", defaultValue: false)
+    public static var autoMountDmgWithoutApps: Bool
 }

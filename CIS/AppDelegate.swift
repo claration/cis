@@ -71,6 +71,12 @@ internal final class AppDelegate: NSObject, NSApplicationDelegate {
             window.makeKeyAndOrderFront(nil)
             track(window)
             NSApp.activate(ignoringOtherApps: true)
+        } catch DMGError.appsUnavailable where Preferences.autoMountDmgWithoutApps {
+            Process.runProcess(
+                executable: "/usr/bin/open",
+                arguments: ["-a", "DiskImageMounter", dmgPath.relativePath]
+            )
+            NSApp.terminate(nil)
         } catch {
             NSAlert.showAlert(
                 title: "Failed to Open DMG File",
